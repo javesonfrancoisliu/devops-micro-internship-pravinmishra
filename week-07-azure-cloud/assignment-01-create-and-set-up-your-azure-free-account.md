@@ -30,13 +30,15 @@ Confirm successful Azure Portal access and Locate the required services and subs
 
 #### Screenshot 1 — Azure Portal homepage after successful login
 
-Add your screenshot here.
+![Screenshot 1 - Azure Portal after login](screenshots/a1-ss1.png)
 
 ---
 
 #### Screenshot 2 — "Subscriptions" section showing the "Free Trial" subscription
 
-Add your screenshot here.
+![Screenshot 2 - Subscriptions list](screenshots/a1-ss2.png)
+
+The subscription is the student offer, "Azure for Students" (Active, $100 credit). I used it instead of the Free Trial because my debit card was rejected as a prepaid-type card.
 
 ---
 
@@ -44,7 +46,7 @@ Add your screenshot here.
 
 Write a three-to-four-line paragraph explaining which Azure services you plan to explore first and why.
 
-Write your answer here.
+I will start with Resource Groups, because every Azure resource lives in one and deleting the group is the cleanest way to avoid cost. Next I will explore Virtual Networks and Virtual Machines to learn the core networking and compute basics, using the free B1s allowance. I will also try Storage Accounts, since Blob Storage gives 5 GB free and is a simple first service. I will check Cost Management after each lab to keep spending at $0.
 
 ---
 
@@ -57,12 +59,12 @@ Write your answer here.
 
 # Completion Checklist
 
-- [ ] Azure Free Account created with identity, phone, and payment verification completed
+- [x] Azure Free Account created with identity, phone, and payment verification completed
 - [ ] Microsoft Agreement and Offer Terms accepted
-- [ ] Azure Portal accessed successfully (Screenshot 1)
-- [ ] Free Trial subscription confirmed (Screenshot 2)
-- [ ] Reflection paragraph written (Notes)
-- [ ] No sensitive information exposed
+- [x] Azure Portal accessed successfully (Screenshot 1)
+- [x] Free Trial subscription confirmed (Screenshot 2)
+- [x] Reflection paragraph written (Notes)
+- [x] No sensitive information exposed
 
 ---
 
