@@ -20,27 +20,33 @@ Create the Azure Resource Group `react-app-rg` in a region close to you.
 
 #### Screenshot 1 — Resource Group overview showing the name and region
 
-Add your screenshot here.
+![Screenshot 1 - Resource Group overview](screenshots/a2-ss1.png)
+
+I created the Resource Group `react-app-rg` in North Europe from the Azure Portal. A Resource Group is the container for everything in this lab, so deleting it at the end removes the VM, disk, IP and network rules in one step.
 
 ---
 
-# Task 2 — Provision Ubuntu VM (20.04) with Correct Networking
+# Task 2 — Provision Ubuntu VM with Correct Networking
 
 ## Goal
 
-Create an Ubuntu 20.04 LTS VM (size B1s) with a Network Security Group allowing SSH (22, restricted to your IP where possible) and HTTP (80).
+Create a VM that can be accessed securely and can serve HTTP traffic.
 
 ### Evidence
 
 #### Screenshot 2 — Azure VM overview page showing the VM name, Resource Group, and region
 
-Add your screenshot here.
+![Screenshot 2 - VM overview](screenshots/a2-ss2.png)
+
+The VM is `react-app-vm` in the Resource Group `react-app-rg`, running in Sweden Central with the size Standard B2ats v2 (2 vCPUs, 1 GiB memory) and Ubuntu 24.04 LTS. The Standard B1s size was not offered to my subscription in the regions I checked, so I used B2ats v2, the closest burstable B-series size that was available. I picked SSH-key authentication with the user `azureuser`.
 
 ---
 
 #### Screenshot 3 — Network Security Group inbound rules showing ports 22 and 80 allowed
 
-Add your screenshot here.
+![Screenshot 3 - NSG inbound rules](screenshots/a2-ss3.png)
+
+The Network Security Group `react-app-vm-nsg` allows TCP 80 (HTTP) and TCP 22 (SSH). The Network Security Group decides what the internet can reach, so only these two ports are open to the VM.
 
 ---
 
@@ -54,7 +60,9 @@ Connect to the VM over SSH and confirm the Linux prompt is visible.
 
 #### Screenshot 4 — Terminal showing a successful SSH login with the prompt visible
 
-Add your screenshot here.
+![Screenshot 4 - SSH login](screenshots/a2-ss4.png)
+
+I connected with `ssh -i ~/.ssh/react-app-key.pem azureuser@<PUBLIC_IP>`. The key file has permission 600 and is stored in `~/.ssh`, outside the repository. The login shows the Ubuntu welcome banner and the `azureuser@react-app-vm:~$` prompt.
 
 ---
 
@@ -68,21 +76,25 @@ Update Ubuntu and install Git, Node.js, and npm.
 
 #### Screenshot 5 — Terminal output showing `node -v` and `npm -v`
 
-Add your screenshot here.
+![Screenshot 5 - Versions](screenshots/a2-ss5.png)
+
+I ran `sudo apt update && sudo apt upgrade -y`, then installed `git`, `nodejs` and `npm` with apt. The versions are Git 2.43.0, Node.js v18.19.1 and npm 9.2.0. Node 18 is new enough to build this app, so the NodeSource upgrade was not needed.
 
 ---
 
-# Task 5 — Clone and Build the React App
+# Task 5 — Clone, Personalize, and Build the React App
 
 ## Goal
 
-Clone `my-react-app`, install dependencies, and run `npm run build` to produce the `build/` directory.
+Update the React application with your full name and deployment date, then create the production build.
 
 ### Evidence
 
 #### Screenshot 6 — Terminal showing successful `npm run build` completion and `ls -la build` output
 
-Add your screenshot here.
+![Screenshot 6 - Build output](screenshots/a2-ss6.png)
+
+I cloned `my-react-app`, edited `src/App.js` to show `Javeson Francois Liu` and the date `08/11/2026` while keeping the JSX structure, then ran `npm install` and `npm run build`. The build compiled successfully, and `build/` contains `index.html` and the `static/` folder with the minified JavaScript and CSS.
 
 ---
 
@@ -90,19 +102,23 @@ Add your screenshot here.
 
 ## Goal
 
-Install Nginx and configure it to serve the `build/` directory with `try_files $uri /index.html;` for SPA routing support.
+Serve the application through Nginx with SPA routing support.
 
 ### Evidence
 
 #### Screenshot 7 — Successful `sudo nginx -t` output
 
-Add your screenshot here.
+![Screenshot 7 - nginx -t](screenshots/a2-ss7.png)
+
+I installed Nginx, enabled it to start on boot and started it. `sudo nginx -t` reports that the syntax is ok and the test is successful. I run this test before every reload so a typo cannot take the site down.
 
 ---
 
 #### Screenshot 8 — Nginx configuration snippet showing the build root and `try_files` directive
 
-Add your screenshot here.
+![Screenshot 8 - Nginx config](screenshots/a2-ss8.png)
+
+The server block sets `root /home/azureuser/my-react-app/build;` and `try_files $uri /index.html;`. The `try_files` rule serves a real file when it exists and otherwise returns the app entry page, so a deep link still loads after a refresh instead of returning a 404. I also ran `chmod o+x /home/azureuser` so Nginx can read the build folder.
 
 ---
 
@@ -110,13 +126,15 @@ Add your screenshot here.
 
 ## Goal
 
-Confirm the React app loads through the VM's public IP, navigation works, and a nested route still works after a page refresh.
+Confirm that the React app loads from the internet.
 
 ### Evidence
 
-#### Screenshot 9 — Browser showing the React app with the public IP visible in the address bar
+#### Screenshot 9 — Browser showing the deployed React app with the full name, deployment date, and VM public IP visible
 
-Add your screenshot here.
+![Screenshot 9 - Deployed app](screenshots/a2-ss9.png)
+
+The app loads at `http://<PUBLIC_IP>` and shows `Deployed by: Javeson Francois Liu` and `Date: 08/11/2026`. I also requested `/about` and a nested path directly, and both returned HTTP 200 with the app, which confirms the SPA routing rule works on direct requests and refresh.
 
 ---
 
@@ -124,13 +142,15 @@ Add your screenshot here.
 
 ## Goal
 
-Restrict the SSH Network Security Group rule to your IP if not already restricted, and confirm the firewall does not block port 80.
+Apply basic security hygiene.
 
 ### Evidence
 
 #### Screenshot 10 (optional) — Network Security Group rule showing SSH restricted to your IP
 
-Add your screenshot here.
+![Screenshot 10 - SSH restricted](screenshots/a2-ss10.png)
+
+I changed the SSH rule's source from Any to my own IP address, so only my connection can reach port 22. I then opened a new SSH session to confirm I still had access. `sudo ufw status` shows `Status: inactive`, so the host firewall does not block port 80; the Network Security Group is the only filter.
 
 ---
 
@@ -141,17 +161,42 @@ Add your screenshot here.
 
 ---
 
+# LinkedIn Post
+
+LinkedIn post URL: https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7525394003479998464-dusk
+
+#### Screenshot 11 — Published LinkedIn post
+
+![Screenshot 11 - Published LinkedIn post](screenshots/a2-ss11.png)
+
+---
+
 # Completion Checklist
 
-- [ ] Task 1: Resource Group created (Screenshot 1)
-- [ ] Task 2: Ubuntu VM provisioned with correct NSG rules (Screenshots 2 & 3)
-- [ ] Task 3: SSH access verified (Screenshot 4)
-- [ ] Task 4: Git, Node.js, and npm installed (Screenshot 5)
-- [ ] Task 5: React app built successfully (Screenshot 6)
-- [ ] Task 6: Nginx configured with SPA routing support (Screenshots 7 & 8)
-- [ ] Task 7: App verified via the VM public IP, including route refresh (Screenshot 9)
-- [ ] Task 8: SSH hardening applied (Screenshot 10, optional)
-- [ ] No sensitive data exposed
+- [x] Created the Resource Group
+- [x] Provisioned an Ubuntu VM (24.04 LTS)
+- [ ] Selected B1s where available (B1s was not available; used B2ats v2)
+- [x] Allowed SSH 22 and HTTP 80 through the Network Security Group
+- [x] Restricted SSH to my IP where possible
+- [x] Connected to the VM through SSH
+- [x] Updated Ubuntu packages
+- [x] Installed and verified Git, Node.js, and npm
+- [x] Cloned the my-react-app repository
+- [x] Installed the React dependencies
+- [x] Updated src/App.js with my full name and deployment date before building
+- [x] Completed npm run build
+- [x] Verified the build/ directory
+- [x] Installed, enabled, and started Nginx
+- [x] Configured the Nginx root to the React build
+- [x] Configured try_files for SPA routing
+- [x] Passed sudo nginx -t
+- [x] Reloaded Nginx
+- [x] Loaded the app through the VM public IP
+- [x] Confirmed that my full name and deployment date appear in the deployed application
+- [x] Tested navigation and route refresh
+- [x] Captured Screenshots 1–11
+- [x] Captured optional Screenshot 10
+- [x] Checked that the evidence does not expose sensitive information
 
 ---
 
