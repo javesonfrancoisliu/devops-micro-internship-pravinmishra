@@ -162,6 +162,14 @@ Paste the public IP URL of your Virtual Machine here:
 
 ---
 
+# LinkedIn Post
+
+LinkedIn post URL: https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7525577015589044224-Cfn_
+
+![Screenshot 14 - Published LinkedIn post](screenshots/a5-ss14.png)
+
+---
+
 # Submission Instructions
 
 - Add all required screenshots in your submission
