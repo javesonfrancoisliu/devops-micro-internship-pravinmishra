@@ -68,6 +68,14 @@ The page opens on the Azure Storage primary endpoint and shows the Mini Finance 
 
 ---
 
+# LinkedIn Post
+
+LinkedIn post URL: https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7525555010558984192-A5ww
+
+![Screenshot 2 - Published LinkedIn post](screenshots/a4-ss2.png)
+
+---
+
 # Submission Instructions
 
 - Add the required screenshot and URL in your submission
