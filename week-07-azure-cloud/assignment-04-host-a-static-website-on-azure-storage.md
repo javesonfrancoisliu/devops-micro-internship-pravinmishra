@@ -18,6 +18,8 @@ Download and extract the Mini Finance static website files (`index.html`, `style
 
 > No screenshot required for this task.
 
+I cloned `https://github.com/pravinmishraaws/mini_finance` and made a clean copy of the files with `git archive`, so the upload has no `.git` folder. It contains `index.html`, `style.css`, the images and the other assets.
+
 ---
 
 # Task 2 — Create a Storage Account and Enable Static Website Hosting
@@ -28,6 +30,8 @@ Create Resource Group `mini-finance-rg` and a globally unique Storage Account na
 
 > No screenshot required for this task. Completion is verified through Task 4.
 
+I created the Resource Group `mini-finance-rg` and the Storage Account `minifinancejfl2611` with the Azure CLI (Standard performance, LRS redundancy). I then enabled Static Website Hosting with `index.html` as the index document, which creates the `$web` container.
+
 ---
 
 # Task 3 — Upload Your Website Files
@@ -37,6 +41,8 @@ Create Resource Group `mini-finance-rg` and a globally unique Storage Account na
 Upload all Mini Finance project files to the `$web` container.
 
 > No screenshot required for this task.
+
+I uploaded the 36 files to the `$web` container with `az storage blob upload-batch`. Before taking the screenshot I requested the pages, CSS, fonts and images from the primary endpoint with `curl`. Every one returned HTTP 200 with the right content type.
 
 ---
 
@@ -50,15 +56,15 @@ Open the primary endpoint URL and confirm the Mini Finance application, styling,
 
 #### Screenshot 1 — Mini Finance website running in the browser
 
-Add your screenshot here.
+![Screenshot 1 - Mini Finance website running in the browser](screenshots/a4-ss1.png)
+
+The page opens on the Azure Storage primary endpoint and shows the Mini Finance overview with its styling, charts and images. The address bar shows the static website URL, and no subscription information is visible.
 
 ---
 
 #### Website URL
 
-Paste the Azure Storage static website URL here:
-
-`Add your URL here`
+`https://minifinancejfl2611.z1.web.core.windows.net/`
 
 ---
 
@@ -71,12 +77,12 @@ Paste the Azure Storage static website URL here:
 
 # Completion Checklist
 
-- [ ] Mini Finance project downloaded and extracted
-- [ ] Storage Account created with Static Website Hosting enabled
-- [ ] All website files uploaded to the `$web` container
-- [ ] Website verified through the primary endpoint (Screenshot 1)
-- [ ] Website URL included
-- [ ] No sensitive account information exposed
+- [x] Mini Finance project downloaded and extracted
+- [x] Storage Account created with Static Website Hosting enabled
+- [x] All website files uploaded to the `$web` container
+- [x] Website verified through the primary endpoint (Screenshot 1)
+- [x] Website URL included
+- [x] No sensitive account information exposed
 
 ---
 
