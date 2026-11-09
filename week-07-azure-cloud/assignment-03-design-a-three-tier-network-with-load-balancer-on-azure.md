@@ -82,6 +82,14 @@ After all three screenshots were captured, I deleted the Resource Group with `az
 
 ---
 
+# LinkedIn Post
+
+LinkedIn post URL: https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7525548258161672192-ioVX
+
+![Screenshot 4 - Published LinkedIn post](screenshots/a3-ss4.png)
+
+---
+
 # Submission Instructions
 
 - Add all required screenshots in your submission
