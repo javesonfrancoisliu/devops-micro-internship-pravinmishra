@@ -60,7 +60,7 @@ I will start with Resource Groups, because every Azure resource lives in one and
 # Completion Checklist
 
 - [x] Azure Free Account created with identity, phone, and payment verification completed
-- [ ] Microsoft Agreement and Offer Terms accepted
+- [x] Microsoft Agreement and Offer Terms accepted
 - [x] Azure Portal accessed successfully (Screenshot 1)
 - [x] Free Trial subscription confirmed (Screenshot 2)
 - [x] Reflection paragraph written (Notes)
