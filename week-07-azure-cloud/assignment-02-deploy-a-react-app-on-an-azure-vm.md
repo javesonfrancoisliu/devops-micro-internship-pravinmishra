@@ -175,7 +175,7 @@ LinkedIn post URL: https://www.linkedin.com/posts/javeson-francois-liu-999135437
 
 - [x] Created the Resource Group
 - [x] Provisioned an Ubuntu VM (24.04 LTS)
-- [ ] Selected B1s where available (B1s was not available; used B2ats v2)
+- [x] Selected B1s where available (B1s was not available, so I used B2ats v2 as the documented fallback)
 - [x] Allowed SSH 22 and HTTP 80 through the Network Security Group
 - [x] Restricted SSH to my IP where possible
 - [x] Connected to the VM through SSH
