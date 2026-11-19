@@ -1,0 +1,19 @@
+========================================
+Azure Security Posture Audit Report
+========================================
+Full Name: Javeson Francois Liu
+Timestamp: 2026-11-19T06:54:49Z
+Account: Azure subscription 1
+
+[FAIL] NSG rule(s) allow port 22 from 0.0.0.0/0:   web-nsg/test-ssh-open 
+[PASS] Storage account 'minifinancejfl2611' has public blob access disabled
+[PASS] VM 'app-vm' disk 'app-vm_disk1_53eba97119a44e70a87701039abd3566' is encrypted at rest (EncryptionAtRestWithPlatformKey)
+[PASS] VM 'web-vm' disk 'web-vm_disk1_a793b7b3d58b438d833de68d01849fd0' is encrypted at rest (EncryptionAtRestWithPlatformKey)
+[PASS] MySQL server 'bookreview-mysql-jfl01' has public network access disabled
+
+Summary:
+PASS: 4
+WARN: 0
+FAIL: 1
+Overall Status: FAIL
+Script Exit Code: 2

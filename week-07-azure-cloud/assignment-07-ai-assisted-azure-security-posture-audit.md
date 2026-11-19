@@ -20,7 +20,9 @@ Confirm your Azure CLI is authenticated and can see the VM, network, storage acc
 
 #### Screenshot 1 — `az account show` and `az vm list -d -o table` confirming your subscription and running VM (subscription ID partially blurred)
 
-Add your screenshot here.
+![Screenshot 1 - Subscription and running VMs](screenshots/a7-ss1.png)
+
+`az account show` confirms the subscription is enabled (tenant ID blurred) and `az vm list -d` shows `app-vm` and `web-vm` running in `BOOKREVIEW-RG`.
 
 ---
 
@@ -34,7 +36,9 @@ Create a `CLAUDE.md` for this workspace that tells Claude what the audit covers 
 
 #### Screenshot 2 — `CLAUDE.md` open in your editor showing the project overview, audit workflow, and safety rules
 
-Add your screenshot here.
+![Screenshot 2 - CLAUDE.md with safety rules](screenshots/a7-ss2.png)
+
+`CLAUDE.md` holds the project overview, the four-check audit scope, the workflow, the safety rules (no mutating `az` command, no claim without report evidence, human runs every fix) and the output rules.
 
 ---
 
@@ -48,7 +52,9 @@ Ask Claude Code to read `CLAUDE.md` and propose a read-only, four-check audit pl
 
 #### Screenshot 3 — Claude Code showing the four-check plan, with no files created or modified
 
-Add your screenshot here.
+![Screenshot 3 - Claude Code audit plan, no files created](screenshots/a7-ss3.png)
+
+Claude read `CLAUDE.md` and proposed read-only `az` commands with a WARN or FAIL rule for each check (NSG ports 22 and 3389, storage public blob access and VM disk encryption are in view). It created and edited no file. Claude suggested WARN for platform-managed disk keys only; I kept PASS for encryption at rest because Azure always encrypts managed disks with platform keys.
 
 ---
 
@@ -62,13 +68,17 @@ Write a Bash script that runs the four checks from Task 3 using read-only `az` c
 
 #### Screenshot 4 — Your script open in your editor, showing the check functions and the `az` commands they call
 
-Add your screenshot here.
+![Screenshot 4 - Audit script check functions](screenshots/a7-ss4.png)
+
+`check_nsg_admin_ports_open` and `check_storage_public_blob_access` use only `az network nsg list`, `az storage account list` and `az storage account show`. After the first Claude run I made the NSG check warn when `az` fails instead of printing a false PASS.
 
 ---
 
 #### Screenshot 5 — Output of `bash -n` (no syntax errors) and `ls -l` showing the script is executable
 
-Add your screenshot here.
+![Screenshot 5 - Syntax check and executable bit](screenshots/a7-ss5.png)
+
+`bash -n` prints no errors and `ls -l` shows the script is executable (`-rwxr-xr-x`).
 
 ---
 
@@ -82,7 +92,9 @@ Run the script against your live resources and read the report honestly, even if
 
 #### Screenshot 6 — Script output showing your Full Name and all four checks with a PASS, WARN, or FAIL result
 
-Add your screenshot here.
+![Screenshot 6 - Baseline audit report](screenshots/a7-ss6.png)
+
+Baseline run: 5 PASS, 0 WARN, 0 FAIL, Overall Status HEALTHY, exit code 0. The report carries my Full Name and covers NSG ports, storage public access, both VM disks and the MySQL server.
 
 ---
 
@@ -96,13 +108,17 @@ Create a Claude Code skill restricted to read-only tools (no `Write`) that runs 
 
 #### Screenshot 7 — Your skill file's frontmatter showing `allowed-tools` without `Write`
 
-Add your screenshot here.
+![Screenshot 7 - Skill frontmatter without Write](screenshots/a7-ss7.png)
+
+`allowed-tools: Bash, Read, Grep` gives the skill no `Write` tool. `disable-model-invocation: true` means it only runs when I invoke it.
 
 ---
 
 #### Screenshot 8 — `/azure-audit` output showing the baseline findings and Claude's explanation
 
-Add your screenshot here.
+![Screenshot 8 - /azure-audit output](screenshots/a7-ss8.png)
+
+`/azure-audit` reports HEALTHY with 5 PASS and says no remediation is needed. Its first run was inconclusive because the sandbox blocked `az` from `~/.azure` and showed `not signed in`. Claude said so instead of trusting the PASS, then re-ran the read-only script outside the sandbox.
 
 ---
 
@@ -116,19 +132,25 @@ Pick one WARN or FAIL finding (or deliberately open an NSG rule to port 22 from 
 
 #### Screenshot 9 — Saved report showing the original finding before the fix
 
-Add your screenshot here.
+![Screenshot 9 - Report before the fix](screenshots/a7-ss9.png)
+
+The baseline was already clean, so I deliberately opened SSH on `web-nsg` with a rule named `test-ssh-open` (port 22 from `*`). The audit reports `[FAIL] NSG rule(s) allow port 22 from 0.0.0.0/0: web-nsg/test-ssh-open`, Overall Status FAIL, exit code 2.
 
 ---
 
 #### Screenshot 10 — Terminal output of the remediation command you ran yourself
 
-Add your screenshot here.
+![Screenshot 10 - Remediation command run by me](screenshots/a7-ss10.png)
+
+I ran `az network nsg rule update` myself to change the source from `*` to my own public IP as a `/32` (blurred), then showed the rule: port 22, one source address.
 
 ---
 
 #### Screenshot 11 — Second `/azure-audit` run (or report) showing the finding resolved
 
-Add your screenshot here.
+![Screenshot 11 - Audit after the fix](screenshots/a7-ss11.png)
+
+The second audit shows 5 PASS, 0 FAIL, HEALTHY and exit code 0. I then deleted the test rule, so `web-nsg` is back to its three original rules.
 
 ---
 
@@ -136,7 +158,25 @@ Add your screenshot here.
 
 Compare this assignment to the AWS audit you built in Week 6: which finding categories map to each other across the two clouds, and what stayed exactly the same about the workflow even though the `az`/`aws` commands are completely different?
 
-Add your answer here
+**What maps across the clouds**
+- NSG rules open on 22 or 3389 in Azure map to security groups open on 22 or 3306 in AWS.
+- Storage account public blob access maps to S3 public access block.
+- VM disk encryption maps to EBS encryption.
+- MySQL public network access maps to RDS `PubliclyAccessible`.
+
+**What stayed the same**
+- The script collects read-only evidence into a PASS, WARN or FAIL report with an exit code, and Claude only explains it.
+- Claude recommends a fix and I run it. Then I audit again to prove it.
+- The workflow is still gather, analyse, recommend, human fixes, re-verify.
+
+**What differed**
+- Azure disks are always encrypted at rest with platform keys, so the disk check passes by default. An EBS volume can be unencrypted.
+- Azure NSG rules carry source prefixes as `*`, `Internet` or `0.0.0.0/0`, so the query has to match all three.
+- The AWS audit also checked cost. This one is security only.
+
+**Lessons**
+- A hidden `az` error can print a false PASS. Claude spotted it in the baseline, and the NSG check now warns when `az` fails.
+- The sandbox blocked `az` from writing `~/.azure`, so the first `/azure-audit` run was inconclusive. A WARN that says "not signed in" is correct, not a failure of the script.
 
 ---
 
@@ -152,15 +192,15 @@ Your submission must include:
 
 # Completion Checklist
 
-- [ ] Task 1: Azure resources confirmed and workspace created (Screenshot 1)
-- [ ] Task 2: `CLAUDE.md` created with project context and safety rules (Screenshot 2)
+- [x] Task 1: Azure resources confirmed and workspace created (Screenshot 1)
+- [x] Task 2: `CLAUDE.md` created with project context and safety rules (Screenshot 2)
 - [ ] Task 3: Claude produced a read-only four-check plan before any script existed (Screenshot 3)
-- [ ] Task 4: Audit script built, syntax-checked, and executable (Screenshots 4–5)
-- [ ] Task 5: Baseline audit run and reviewed honestly (Screenshot 6)
-- [ ] Task 6: `/azure-audit` skill created with no `Write` permission and run successfully (Screenshots 7–8)
-- [ ] Task 7: A real finding fixed by you (not Claude) and re-verified as resolved (Screenshots 9–11)
-- [ ] Notes comparing this to the Week 6 AWS audit completed
-- [ ] No subscription IDs, tenant IDs, or credentials exposed
+- [x] Task 4: Audit script built, syntax-checked, and executable (Screenshots 4–5)
+- [x] Task 5: Baseline audit run and reviewed honestly (Screenshot 6)
+- [x] Task 6: `/azure-audit` skill created with no `Write` permission and run successfully (Screenshots 7–8)
+- [x] Task 7: A real finding fixed by you (not Claude) and re-verified as resolved (Screenshots 9–11)
+- [x] Notes comparing this to the Week 6 AWS audit completed
+- [x] No subscription IDs, tenant IDs, or credentials exposed
 
 ---
 
