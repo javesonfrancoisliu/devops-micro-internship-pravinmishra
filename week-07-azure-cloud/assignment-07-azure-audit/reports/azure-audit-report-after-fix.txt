@@ -1,0 +1,19 @@
+========================================
+Azure Security Posture Audit Report
+========================================
+Full Name: Javeson Francois Liu
+Timestamp: 2026-11-19T06:56:49Z
+Account: Azure subscription 1
+
+[PASS] No NSG rule allows SSH (22) or RDP (3389) from 0.0.0.0/0
+[PASS] Storage account 'minifinancejfl2611' has public blob access disabled
+[PASS] VM 'app-vm' disk 'app-vm_disk1_53eba97119a44e70a87701039abd3566' is encrypted at rest (EncryptionAtRestWithPlatformKey)
+[PASS] VM 'web-vm' disk 'web-vm_disk1_a793b7b3d58b438d833de68d01849fd0' is encrypted at rest (EncryptionAtRestWithPlatformKey)
+[PASS] MySQL server 'bookreview-mysql-jfl01' has public network access disabled
+
+Summary:
+PASS: 5
+WARN: 0
+FAIL: 0
+Overall Status: HEALTHY
+Script Exit Code: 0
