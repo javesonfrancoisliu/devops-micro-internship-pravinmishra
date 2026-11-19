@@ -194,7 +194,7 @@ Your submission must include:
 
 - [x] Task 1: Azure resources confirmed and workspace created (Screenshot 1)
 - [x] Task 2: `CLAUDE.md` created with project context and safety rules (Screenshot 2)
-- [ ] Task 3: Claude produced a read-only four-check plan before any script existed (Screenshot 3)
+- [x] Task 3: Claude produced a read-only four-check plan with no file created or modified (Screenshot 3)
 - [x] Task 4: Audit script built, syntax-checked, and executable (Screenshots 4–5)
 - [x] Task 5: Baseline audit run and reviewed honestly (Screenshot 6)
 - [x] Task 6: `/azure-audit` skill created with no `Write` permission and run successfully (Screenshots 7–8)
