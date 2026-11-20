@@ -570,7 +570,7 @@ Confirm that the following files are included in your GitHub repository:
 - [ ] Published the required LinkedIn post
 - [ ] Added the LinkedIn post URL and screenshot
 - [x] Included the GitHub repository/folder URL
-- [ ] Confirmed that no sensitive information is exposed
+- [x] Confirmed that no sensitive information is exposed
 
 ---
 

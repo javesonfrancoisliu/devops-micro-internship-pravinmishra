@@ -520,7 +520,7 @@ Write the post in your own words, include at least one project image or other pr
 - [ ] Added the LinkedIn post URL
 - [x] Captured all 28 required screenshots
 - [x] Confirmed that my full name is visible in the required screenshots
-- [ ] Checked that no secrets or sensitive information are exposed
+- [x] Checked that no secrets or sensitive information are exposed
 
 ---
 
