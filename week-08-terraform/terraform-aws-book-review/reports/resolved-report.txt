@@ -1,0 +1,7 @@
+Terraform Drift and Policy Review
+Reviewer: Javeson Francois Liu
+Generated: 2026-11-21 00:57:08 +0700
+Terraform plan exit code: 0
+Pending changes: none
+Evidence: terraform plan -detailed-exitcode reported no differences, so no plan JSON was created
+Overall Status: HEALTHY

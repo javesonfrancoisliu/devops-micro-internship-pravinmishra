@@ -1,0 +1,7 @@
+region            = "ap-southeast-5"
+project_name      = "bookreview"
+repo_url          = "https://github.com/pravinmishraaws/book-review-app.git"
+web_instance_type = "t3.small"
+app_instance_type = "t3.micro"
+db_instance_class = "db.t3.micro"
+db_name           = "book_review_db"
