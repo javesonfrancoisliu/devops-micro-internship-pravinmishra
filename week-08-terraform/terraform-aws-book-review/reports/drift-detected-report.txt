@@ -1,0 +1,9 @@
+Terraform Drift and Policy Review
+Reviewer: Javeson Francois Liu
+Generated: 2026-11-21 00:16:30 +0700
+Terraform plan exit code: 2
+Pending changes:
+  - module.security.aws_security_group.web [update]
+Policy findings:
+  - check_open_ingress: module.security.aws_security_group.web allows 22-22 from 0.0.0.0/0
+Overall Status: FAIL

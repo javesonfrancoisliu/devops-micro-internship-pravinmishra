@@ -1,0 +1,57 @@
+#!/bin/bash
+set -euxo pipefail
+exec > >(tee -a /var/log/app-userdata.log) 2>&1
+
+export DEBIAN_FRONTEND=noninteractive
+export HOME=/root
+
+apt-get update -y
+apt-get install -y git nodejs npm jq mysql-client unzip curl
+curl -fsSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscliv2.zip
+unzip -q /tmp/awscliv2.zip -d /tmp/awscli-install
+/tmp/awscli-install/aws/install
+
+git clone ${repo_url} /opt/book-review-app
+cd /opt/book-review-app/backend
+npm install --omit=dev
+
+useradd --system --home /opt/book-review-app --shell /usr/sbin/nologin bookreview
+chown -R bookreview:bookreview /opt/book-review-app
+
+cat > /usr/local/bin/start-backend.sh <<'WRAPPER'
+#!/bin/bash
+set -euo pipefail
+db_secret=$(/usr/local/bin/aws secretsmanager get-secret-value --region ${region} --secret-id ${db_secret_arn} --query SecretString --output text)
+export DB_USER=$(echo "$db_secret" | jq -r .username)
+export DB_PASS=$(echo "$db_secret" | jq -r .password)
+export JWT_SECRET=$(/usr/local/bin/aws secretsmanager get-secret-value --region ${region} --secret-id ${jwt_secret_arn} --query SecretString --output text)
+cd /opt/book-review-app/backend
+exec /usr/bin/node src/server.js
+WRAPPER
+chmod 755 /usr/local/bin/start-backend.sh
+
+cat > /etc/systemd/system/book-review-backend.service <<'UNIT'
+[Unit]
+Description=Book Review backend
+After=network.target
+
+[Service]
+User=bookreview
+Environment=HOME=/opt/book-review-app
+Environment=PORT=3001
+Environment=DB_HOST=${db_host}
+Environment=DB_NAME=${db_name}
+Environment=DB_DIALECT=mysql
+Environment=ALLOWED_ORIGINS=http://${public_alb_dns}
+ExecStart=/usr/local/bin/start-backend.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl daemon-reload
+systemctl enable --now book-review-backend
+
+echo "Book Review app tier ready"
