@@ -296,6 +296,8 @@ Add a screenshot showing successful database reads and writes.
 
 **Public Application URL / DNS:** http://bookreview-public-alb-568511805.ap-southeast-5.elb.amazonaws.com
 
+**Known limitations:** the public ALB serves HTTP only because the lab has no domain or ACM certificate, so HTTPS would be the first production step. The public ALB health check passes on the default Nginx page before the app is built, so a stricter health path should be used. There is no Auto Scaling, and RDS backup retention is 1 day because the free tier caps it.
+
 ---
 
 # Task 7 — Demonstrate the Agentic AI Workflow

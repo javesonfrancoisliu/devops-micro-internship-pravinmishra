@@ -52,9 +52,9 @@ check_open_ingress() {
     | select(.type == "aws_security_group")
     | .address as $address
     | .ingress[]
-    | select((.cidr_blocks // []) | index("0.0.0.0/0"))
-    | select((.from_port as $port | $safe | index($port)) | not)
-    | "\($address) allows \(.from_port)-\(.to_port) from 0.0.0.0/0"
+    | select(((.cidr_blocks // []) | index("0.0.0.0/0")) or ((.ipv6_cidr_blocks // []) | index("::/0")))
+    | select((.protocol == "tcp" and .from_port == .to_port and (.from_port as $port | $safe | index($port))) | not)
+    | "\($address) allows \(.protocol) \(.from_port)-\(.to_port) from the internet"
   ' "$PLAN_JSON"
 }
 
