@@ -1,0 +1,6 @@
+region          = "ap-southeast-5"
+project_name    = "epicbook"
+instance_type   = "t3.micro"
+public_key_path = "~/.ssh/id_ed25519.pub"
+db_name         = "bookstore"
+db_username     = "epicadmin"
