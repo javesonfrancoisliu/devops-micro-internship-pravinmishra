@@ -15,3 +15,15 @@ id_*
 .DS_Store
 .idea/
 .claude/
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+tfplan
+*.tfplan
+override.tf
+override.tf.json
+!.terraform.lock.hcl
