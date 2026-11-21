@@ -24,19 +24,19 @@ This project will use the Git repository and Ansible controller prepared in Assi
 
 #### Screenshot 1 — Terminal showing the complete `ansible-adhoc-lab` project structure
 
-Add your screenshot here.
+![Screenshot 1](screenshots/a2-ss1.png)
 
 ---
 
 #### Screenshot 2 — Terminal showing `git status --short` with the new project files and updated `.gitignore`
 
-Add your screenshot here.
+![Screenshot 2](screenshots/a2-ss2.png)
 
 ---
 
 ### Notes
 
-Add your task notes here.
+I created `ansible-adhoc-lab/` inside the Assignment 01 repository, with `terraform/` and `ansible/` folders and a README. `.gitignore` now excludes Terraform state, `.terraform/`, plan files and `*.tfvars`, so state, keys and my public IP never reach Git. `git status --short` lists source files only.
 
 ---
 
@@ -57,25 +57,25 @@ Do not configure both providers for this assignment.
 
 #### Screenshot 3 — Terraform configuration showing the three or four server roles and the `for_each` or `count` implementation
 
-Add your screenshot here.
+![Screenshot 3](screenshots/a2-ss3.png)
 
 ---
 
 #### Screenshot 4 — Terraform configuration showing SSH restricted to the controller IP and HTTP allowed only for web hosts
 
-Add your screenshot here.
+![Screenshot 4](screenshots/a2-ss4.png)
 
 ---
 
 #### Screenshot 5 — Terraform output configuration showing how public IP addresses are associated with the server roles
 
-Add your screenshot here.
+![Screenshot 5](screenshots/a2-ss5.png)
 
 ---
 
 ### Notes
 
-Add your task notes here.
+Cloud: AWS (ap-southeast-5). Option: three VMs (web, app, db). One `aws_instance` resource uses `for_each` over a `server_roles` set, so a new role is a one-line change. The AMI is the latest Ubuntu 24.04 found by a data source, with t3.micro, an encrypted gp3 root disk and IMDSv2 required. The SSH security group allows port 22 from `controller_ip/32` only, and the value sits in a gitignored `terraform.tfvars`. A second group opens port 80 and is attached to the web host only. The `public_ips` output maps each role to its public IP.
 
 ---
 
@@ -89,25 +89,25 @@ Initialize and validate the Terraform configuration, review the execution plan, 
 
 #### Screenshot 6 — Final `terraform apply` output showing `Apply complete`
 
-Add your screenshot here.
+![Screenshot 6](screenshots/a2-ss6.png)
 
 ---
 
 #### Screenshot 7 — `terraform output public_ips` showing the role-to-IP mapping for all three or four VMs
 
-Add your screenshot here.
+![Screenshot 7](screenshots/a2-ss7.png)
 
 ---
 
 #### Screenshot 8 — Azure Portal or AWS Management Console showing all three or four VMs in the `Running` state, with their role-based names visible
 
-Add your screenshot here.
+![Screenshot 8](screenshots/a2-ss8.png)
 
 ---
 
 ### Notes
 
-Add your task notes here.
+`terraform init`, `validate` and `fmt -check` passed. The plan showed 6 to add, 0 to change, 0 to destroy, and apply built the key pair, two security groups and three instances in about 12 seconds. Public IPs (lab only, destroyed after submission): web 43.217.97.44, app 56.69.124.120, db 56.69.125.70. The AWS Console shot (Screenshot 8) shows all three instances Running with their role names.
 
 ---
 
@@ -121,13 +121,13 @@ Verify that each managed VM can be accessed from the Ansible controller using SS
 
 #### Screenshot 9 — Terminal showing successful SSH hostname output from all VMs
 
-Add your screenshot here.
+![Screenshot 9](screenshots/a2-ss9.png)
 
 ---
 
 ### Notes
 
-Add your task notes here.
+Login uses the dedicated `id_ed25519_ansible` key from Assignment 01, loaded in `ssh-agent`. Running `ssh ... hostname` against each public IP printed the private hostname of that VM with no password prompt, so key-based access works on all three.
 
 ---
 
@@ -143,19 +143,19 @@ The inventory allows Ansible to run commands against all servers, or only specif
 
 #### Screenshot 10 — `inventory.ini` showing the `web`, `app`, and `db` groups
 
-Add your screenshot here.
+![Screenshot 10](screenshots/a2-ss10.png)
 
 ---
 
 #### Screenshot 11 — Output of `ansible-inventory -i inventory.ini --graph`
 
-Add your screenshot here.
+![Screenshot 11](screenshots/a2-ss11.png)
 
 ---
 
 ### Notes
 
-Add your task notes here.
+The inventory has `[web]` with web01, `[app]` with app01 and `[db]` with db01, plus `[all:vars]` holding the user, the key file and `StrictHostKeyChecking=accept-new`. The commands run from `ansible/`, where the project `ansible.cfg` is not loaded, so the connection settings live in the inventory. `ansible-inventory --graph` shows the three groups with one host each.
 
 ---
 
@@ -171,43 +171,43 @@ This task proves that the inventory is working and that Ansible can control mult
 
 #### Screenshot 12 — Output of `ansible all -i inventory.ini -m ping`
 
-Add your screenshot here.
+![Screenshot 12](screenshots/a2-ss12.png)
 
 ---
 
 #### Screenshot 13 — Output of `ansible all -i inventory.ini -m command -a "uptime"`
 
-Add your screenshot here.
+![Screenshot 13](screenshots/a2-ss13.png)
 
 ---
 
 #### Screenshot 14 — Output of `ansible web -i inventory.ini -m apt -a "name=nginx state=present update_cache=yes" --become`
 
-Add your screenshot here.
+![Screenshot 14](screenshots/a2-ss14.png)
 
 ---
 
 #### Screenshot 15 — Output of `ansible web -i inventory.ini -m service -a "name=nginx state=started enabled=yes" --become`
 
-Add your screenshot here.
+![Screenshot 15](screenshots/a2-ss15.png)
 
 ---
 
 #### Screenshot 16 — Output of `ansible all -i inventory.ini -m apt -a "name=htop state=present update_cache=yes" --become`
 
-Add your screenshot here.
+![Screenshot 16](screenshots/a2-ss16.png)
 
 ---
 
 #### Screenshot 17 — Output of `ansible web -i inventory.ini -m command -a "systemctl is-active nginx"`
 
-Add your screenshot here.
+![Screenshot 17](screenshots/a2-ss17.png)
 
 ---
 
 ### Notes
 
-Add your task notes here.
+`ping` and `uptime` answered from all three hosts. The nginx install ran on `web` only and reported CHANGED. The service module then reported SUCCESS with `changed` false, because the package install had already started and enabled nginx. `htop` on all hosts also reported `changed` false, because the Ubuntu image already includes it. `systemctl is-active nginx` printed `active`; the `command` module always reports CHANGED, which is expected. The apt and service outputs are long JSON, so Screenshots 14 and 15 show the top of the output only.
 
 ---
 
@@ -219,13 +219,13 @@ Add your task notes here.
 
 Paste your LinkedIn post URL here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7529797603266441216-I169/
 
 ---
 
 #### Screenshot — Published LinkedIn post
 
-Add your screenshot here.
+![LinkedIn post](screenshots/a2-ss18-linkedin.png)
 
 ---
 
@@ -235,37 +235,37 @@ Answer the following in your own words:
 
 **1. What is the purpose of an Ansible inventory file?**
 
-Add your answer here.
+The inventory tells Ansible which machines exist, how to reach them and how they are grouped. With it, one command can target every server or only one group, and shared connection settings live in one place instead of in each command.
 
 ---
 
 **2. What is the difference between the `web`, `app`, and `db` groups in your inventory?**
 
-Add your answer here.
+They are role groups. `web` holds the web server that runs nginx and is the only host open to HTTP. `app` holds the application server and `db` holds the database server, and both are reachable by SSH from the controller only. Grouping lets me run a command on one tier without touching the others.
 
 ---
 
 **3. What does the Ansible `ping` module verify?**
 
-Add your answer here.
+It checks that Ansible can log in over SSH with the configured key and that a usable Python interpreter runs on the target. It does not send an ICMP ping, and it returns `pong` when the whole chain works.
 
 ---
 
 **4. Why do package installation commands require `--become`?**
 
-Add your answer here.
+Installing packages and managing services needs root. `--become` makes Ansible switch from the `ubuntu` user to root through sudo for that task. Without it, apt fails with a permission error.
 
 ---
 
 **5. When would you use an ad-hoc command instead of a playbook?**
 
-Add your answer here.
+An ad-hoc command suits a quick one-off job: a connectivity check, reading uptime, restarting a service or installing a package on a few hosts. A playbook suits work that must be repeatable, reviewed, stored in Git and run in a set order.
 
 ---
 
 **6. What is one challenge you faced while setting up SSH or inventory, and how did you fix it?**
 
-Add your answer here.
+My laptop runs Cloudflare WARP, so my public IP changed between checks (104.28.194.x, then .245 and .247 at 104.28.226.x depending on the service). A `/32` SSH rule on that address would have locked the controller out. I disconnected WARP, confirmed a stable IP across several services, used it for `controller_ip`, and SSH worked on the first try.
 
 ---
 
@@ -273,13 +273,13 @@ Add your answer here.
 
 Confirm that the following files are included in your assignment workspace:
 
-- [ ] `ansible-adhoc-lab/README.md`
-- [ ] `ansible-adhoc-lab/terraform/providers.tf`
-- [ ] `ansible-adhoc-lab/terraform/main.tf`
-- [ ] `ansible-adhoc-lab/terraform/variables.tf`
-- [ ] `ansible-adhoc-lab/terraform/outputs.tf`
-- [ ] `ansible-adhoc-lab/ansible/inventory.ini`
-- [ ] Updated `.gitignore`
+- [x] `ansible-adhoc-lab/README.md`
+- [x] `ansible-adhoc-lab/terraform/providers.tf`
+- [x] `ansible-adhoc-lab/terraform/main.tf`
+- [x] `ansible-adhoc-lab/terraform/variables.tf`
+- [x] `ansible-adhoc-lab/terraform/outputs.tf`
+- [x] `ansible-adhoc-lab/ansible/inventory.ini`
+- [x] Updated `.gitignore`
 
 ---
 
@@ -300,30 +300,30 @@ Confirm that the following files are included in your assignment workspace:
 
 # Completion Checklist
 
-- [ ] Task 1: `ansible-adhoc-lab` project structure created
-- [ ] Task 1: `.gitignore` updated for Terraform files
-- [ ] Task 2: Terraform configuration created
-- [ ] Task 2: Server roles defined for either three or four VMs
-- [ ] Task 2: `count` or `for_each` used
-- [ ] Task 2: SSH restricted to the controller public IP
-- [ ] Task 2: HTTP allowed only for web hosts
-- [ ] Task 2: Terraform output maps roles to public IPs
-- [ ] Task 3: Terraform initialized successfully
-- [ ] Task 3: Terraform configuration validated
-- [ ] Task 3: Terraform apply completed successfully
-- [ ] Task 3: All selected VMs are running
-- [ ] Task 4: SSH key-based access works for every VM
-- [ ] Task 5: `inventory.ini` contains `web`, `app`, and `db` groups
-- [ ] Task 5: `ansible-inventory -i inventory.ini --graph` shows the correct groups
-- [ ] Task 6: `ansible all -i inventory.ini -m ping` returns `SUCCESS`
-- [ ] Task 6: Ad-hoc commands run successfully
-- [ ] Task 6: `--become` was used for package and service tasks
-- [ ] Task 6: Nginx is active on the `web` group
-- [ ] Screenshots 1–17 are included
-- [ ] Assignment questions are answered
-- [ ] LinkedIn post published
-- [ ] LinkedIn post URL added
-- [ ] No sensitive information is exposed
+- [x] Task 1: `ansible-adhoc-lab` project structure created
+- [x] Task 1: `.gitignore` updated for Terraform files
+- [x] Task 2: Terraform configuration created
+- [x] Task 2: Server roles defined for either three or four VMs
+- [x] Task 2: `count` or `for_each` used
+- [x] Task 2: SSH restricted to the controller public IP
+- [x] Task 2: HTTP allowed only for web hosts
+- [x] Task 2: Terraform output maps roles to public IPs
+- [x] Task 3: Terraform initialized successfully
+- [x] Task 3: Terraform configuration validated
+- [x] Task 3: Terraform apply completed successfully
+- [x] Task 3: All selected VMs are running
+- [x] Task 4: SSH key-based access works for every VM
+- [x] Task 5: `inventory.ini` contains `web`, `app`, and `db` groups
+- [x] Task 5: `ansible-inventory -i inventory.ini --graph` shows the correct groups
+- [x] Task 6: `ansible all -i inventory.ini -m ping` returns `SUCCESS`
+- [x] Task 6: Ad-hoc commands run successfully
+- [x] Task 6: `--become` was used for package and service tasks
+- [x] Task 6: Nginx is active on the `web` group
+- [x] Screenshots 1–17 are included
+- [x] Assignment questions are answered
+- [x] LinkedIn post published
+- [x] LinkedIn post URL added
+- [x] No sensitive information is exposed
 
 ---
 
