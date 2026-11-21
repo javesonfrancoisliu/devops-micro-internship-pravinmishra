@@ -1,0 +1,102 @@
+---
+- name: Create the application directory
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0755"
+
+- name: Clone the EpicBook repository
+  ansible.builtin.git:
+    repo: "{{ app_repo }}"
+    dest: "{{ app_dir }}"
+    version: main
+  become: true
+  become_user: "{{ app_user }}"
+  register: epicbook_source
+
+- name: Install Node.js dependencies
+  ansible.builtin.command: npm install --omit=dev
+  args:
+    chdir: "{{ app_dir }}"
+  become: true
+  become_user: "{{ app_user }}"
+  register: epicbook_npm
+  changed_when: "'up to date' not in epicbook_npm.stdout"
+
+- name: Write the PM2 ecosystem file with the database connection
+  ansible.builtin.template:
+    src: ecosystem.config.js.j2
+    dest: "{{ app_dir }}/ecosystem.config.js"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0600"
+  no_log: true
+  register: epicbook_ecosystem
+
+- name: Check whether PM2 already manages EpicBook
+  ansible.builtin.command: pm2 describe {{ pm2_process_name }}
+  become: true
+  become_user: "{{ app_user }}"
+  register: epicbook_pm2_state
+  changed_when: false
+  failed_when: false
+
+- name: Start EpicBook under PM2
+  ansible.builtin.command: pm2 start ecosystem.config.js
+  args:
+    chdir: "{{ app_dir }}"
+  become: true
+  become_user: "{{ app_user }}"
+  when: epicbook_pm2_state.rc != 0
+  changed_when: true
+
+- name: Reload EpicBook when the source or connection changed
+  ansible.builtin.command: pm2 reload ecosystem.config.js --update-env
+  args:
+    chdir: "{{ app_dir }}"
+  become: true
+  become_user: "{{ app_user }}"
+  when: epicbook_pm2_state.rc == 0 and (epicbook_source.changed or epicbook_ecosystem.changed)
+  changed_when: true
+
+- name: Enable PM2 at boot
+  ansible.builtin.command: pm2 startup systemd -u {{ app_user }} --hp {{ pm2_user_home }}
+  args:
+    creates: /etc/systemd/system/pm2-{{ app_user }}.service
+
+- name: Save the PM2 process list
+  ansible.builtin.command: pm2 save
+  become: true
+  become_user: "{{ app_user }}"
+  changed_when: false
+
+- name: Wait for EpicBook to listen
+  ansible.builtin.wait_for:
+    port: "{{ app_port }}"
+    host: 127.0.0.1
+    timeout: 90
+
+- name: Count the authors already in the database
+  ansible.builtin.command: >
+    mysql -h {{ db_host }} -P {{ db_port }} -u {{ db_user }} {{ db_name }}
+    -N -B -e "SELECT COUNT(*) FROM Author"
+  environment:
+    MYSQL_PWD: "{{ db_password }}"
+  no_log: true
+  register: epicbook_author_count
+  changed_when: false
+
+- name: Load the author and book seed data
+  ansible.builtin.shell: >
+    mysql -h {{ db_host }} -P {{ db_port }} -u {{ db_user }} {{ db_name }}
+    < {{ app_dir }}/db/{{ item }}
+  environment:
+    MYSQL_PWD: "{{ db_password }}"
+  no_log: true
+  loop:
+    - author_seed.sql
+    - books_seed.sql
+  when: epicbook_author_count.stdout | trim | int == 0
+  changed_when: true

@@ -1,0 +1,40 @@
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+- name: Remove the default site
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload Nginx
+
+- name: Install the EpicBook reverse proxy site
+  ansible.builtin.template:
+    src: epicbook.conf.j2
+    dest: /etc/nginx/sites-available/epicbook.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload Nginx
+
+- name: Enable the EpicBook site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/epicbook.conf
+    dest: /etc/nginx/sites-enabled/epicbook.conf
+    state: link
+  notify: Reload Nginx
+
+- name: Apply pending Nginx handlers now
+  ansible.builtin.meta: flush_handlers
+
+- name: Validate the Nginx configuration
+  ansible.builtin.command: nginx -t
+  changed_when: false
+
+- name: Start and enable Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
