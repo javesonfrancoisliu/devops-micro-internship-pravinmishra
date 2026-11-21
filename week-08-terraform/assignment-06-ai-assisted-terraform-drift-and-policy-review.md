@@ -497,11 +497,11 @@ Suggested tags:
 
 ### LinkedIn Post URL
 
-Add your LinkedIn post URL here.
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-terraform-agenticai-ugcPost-7529761661025484800-SNqw/
 
 ### Published LinkedIn Post Screenshot — Mandatory
 
-Add a screenshot of the published LinkedIn post here.
+![Published LinkedIn Post](screenshots/a6-ss20-linkedin.png)
 
 ---
 
@@ -567,8 +567,8 @@ Confirm that the following files are included in your GitHub repository:
 - [x] Mapped the workflow to `Gather --> Analyze --> Human Act --> Verify`
 - [x] Included all 19 numbered screenshots
 - [x] Answered all required questions
-- [ ] Published the required LinkedIn post
-- [ ] Added the LinkedIn post URL and screenshot
+- [x] Published the required LinkedIn post
+- [x] Added the LinkedIn post URL and screenshot
 - [x] Included the GitHub repository/folder URL
 - [x] Confirmed that no sensitive information is exposed
 
