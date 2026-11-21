@@ -1,0 +1,77 @@
+---
+- name: Play 1 - Install packages and start Nginx
+  hosts: web
+  become: true
+  tasks:
+    - name: Install Nginx, Git and Rsync
+      ansible.builtin.apt:
+        name:
+          - nginx
+          - git
+          - rsync
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Start and enable Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+- name: Play 2 - Deploy the Mini Finance website
+  hosts: web
+  become: true
+  vars:
+    repo_url: https://github.com/pravinmishraaws/mini_finance.git
+    repo_dir: /opt/mini_finance
+    web_root: /var/www/html/
+  tasks:
+    - name: Clone the Mini Finance repository
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_dir }}"
+        version: main
+        force: true
+
+    - name: Synchronize the website files to the web root
+      ansible.posix.synchronize:
+        src: "{{ repo_dir }}/"
+        dest: "{{ web_root }}"
+        delete: true
+        rsync_opts:
+          - "--exclude=.git"
+      delegate_to: "{{ inventory_hostname }}"
+      notify: Reload Nginx
+
+    - name: Set ownership of the web root
+      ansible.builtin.file:
+        path: "{{ web_root }}"
+        owner: www-data
+        group: www-data
+        recurse: true
+
+  handlers:
+    - name: Reload Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+
+- name: Play 3 - Verify the deployment from the controller
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Request the Mini Finance home page
+      ansible.builtin.uri:
+        url: "http://{{ hostvars[groups['web'][0]].ansible_host }}"
+        return_content: true
+      register: site_response
+
+    - name: Assert the site answers with HTTP 200 and Mini Finance content
+      ansible.builtin.assert:
+        that:
+          - site_response.status == 200
+          - site_response.content | length > 0
+        success_msg: "Mini Finance returned HTTP {{ site_response.status }}"
+        fail_msg: "Mini Finance did not return the expected response"
