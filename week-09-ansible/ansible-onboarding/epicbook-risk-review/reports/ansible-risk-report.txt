@@ -1,0 +1,21 @@
+Ansible change risk review
+Reviewer: Javeson Francois Liu
+Date: 2026-11-21 15:51:30 +0700
+Playbook: ansible/site.yml
+Inventory: ansible/inventory.ini
+Mode: --check --diff (nothing was applied)
+
+Dry run recap: epicbook-web               : ok=14   changed=1    unreachable=0    failed=0    skipped=9    rescued=0    ignored=0   
+Changed tasks: 1
+Skipped in check mode (not evaluated): 9
+    - nginx : Restart Nginx to apply tuning
+
+Risk categories
+[clear]   Destructive (0)
+[FLAGGED] Service disruption (1)
+    - nginx : Restart Nginx to apply tuning
+[clear]   Security and access (0)
+[clear]   Package and config drift (0)
+
+Overall status: WARNING
+Exit code: 1 = risky changed tasks found, a human must review before applying
