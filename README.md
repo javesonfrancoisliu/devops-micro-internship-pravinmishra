@@ -3,7 +3,7 @@
 ![Cohort](https://img.shields.io/badge/Cohort-3-blue?style=for-the-badge)
 ![Program](https://img.shields.io/badge/DevOps_Micro_Internship-Pravin_Mishra-orange?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-In_Progress-yellow?style=for-the-badge)
-![Weeks](https://img.shields.io/badge/Weeks_Completed-7%2F14-green?style=for-the-badge)
+![Weeks](https://img.shields.io/badge/Weeks_Completed-8%2F14-green?style=for-the-badge)
 
 > 👋 **New here?** Read the [submission instructions](./onboarding) first — how to fork, fill in, and submit your assignments.
 > Find all the required links & assignment guidelines from here [Required links](./dmi_cohort3_resources.md)
@@ -92,7 +92,7 @@ This is not a course. It is an internship-style program — real deployments, re
 [![Week 07 – Azure](./badges/week-07.svg)](./week-07-azure-cloud/)
 
 <!-- Week 08 → Terraform -->
-<!-- [![Week 08 – Terraform](./badges/week-08.svg)](./week-08-terraform/) -->
+[![Week 08 – Terraform](./badges/week-08.svg)](./week-08-terraform/)
 
 <!-- Week 09 → Ansible -->
 <!-- [![Week 09 – Ansible](./badges/week-09.svg)](./week-09-ansible/) -->
@@ -138,7 +138,7 @@ This is not a course. It is an internship-style program — real deployments, re
 | 05 | DevOps Lifecycle & Agile | ✅ Completed | ✅ Solved | [A03](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-aws-activity-7507455351512944640-0hBz?utm_source=share&utm_medium=member_desktop&rcm=ACoAAG4wFkUBa3UKaFy_wDsgcorcmYbDo44e5-g) · [A04](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-scrum-ugcPost-7508729863059525632-LInn) · [A05](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-agenticai-claudecode-share-7508746517768445952-hMMk) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w5-agile) |
 | 06 | AWS Cloud | ✅ Completed | ✅ Solved | [A05](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-aws-highavailability-share-7508912842021208064-j3p5) · [A06](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-aws-threetierarchitecture-share-7508938526034653184-m4Es) · [A07](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-aws-agenticai-ugcPost-7509108490053816321-D-qy) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w6-aws) |
 | 07 | Azure Cloud | ✅ Completed | ✅ Solved | [A02](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7525394003479998464-dusk) · [A03](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7525548258161672192-ioVX) · [A04](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7525555010558984192-A5ww)· [A05](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7525577015589044224-Cfn_) · [A06](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-share-7529072779493662721-UqY6)· [Weekly](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-azure-cloudengineering-ugcPost-7529103881507811328-TQfu) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w7-azure) |
-| 08 | Terraform | 🔄 In Progress | ⏳ Pending | [A04](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-terraform-ugcPost-7529447755602268160-oFgf) · [A05](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-terraform-agenticai-ugcPost-7529761375083053056-Ejfz/) · [A06](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-terraform-agenticai-ugcPost-7529761661025484800-SNqw/) | — |
+| 08 | Terraform | ✅ Completed | ✅ Solved | [A04](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-terraform-ugcPost-7529447755602268160-oFgf) · [A05](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-terraform-agenticai-ugcPost-7529761375083053056-Ejfz/) · [A06](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-terraform-agenticai-ugcPost-7529761661025484800-SNqw/) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w8-terraform) |
 | 09 | Ansible | ⬜ Not Started | ⏳ Pending | — | — |
 | 10 | Azure DevOps (CI/CD) | ⬜ Not Started | ⏳ Pending | — | — |
 | 11 | Docker | ⬜ Not Started | ⏳ Pending | — | — |
