@@ -1,0 +1,56 @@
+---
+- name: Play 1 - Install and start Nginx
+  hosts: web
+  become: true
+  tasks:
+    - name: Install Nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Start and enable Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+- name: Play 2 - Deploy the static website
+  hosts: web
+  become: true
+  tasks:
+    - name: Copy index.html to the web root
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload Nginx
+
+  handlers:
+    - name: Reload Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+
+- name: Play 3 - Verify both web servers from the controller
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Check that each web server returns HTTP 200
+      ansible.builtin.uri:
+        url: "http://{{ hostvars[item].ansible_host }}"
+        status_code: 200
+        return_content: false
+      loop: "{{ groups['web'] }}"
+      register: web_check
+
+    - name: Show the verified status codes
+      ansible.builtin.debug:
+        msg: "{{ item.item }} returned HTTP {{ item.status }}"
+      loop: "{{ web_check.results }}"
+      loop_control:
+        label: "{{ item.item }}"
