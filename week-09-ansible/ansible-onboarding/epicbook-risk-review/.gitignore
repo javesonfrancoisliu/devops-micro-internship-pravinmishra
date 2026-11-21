@@ -1,0 +1,7 @@
+.vault_pass
+ansible/.vault_pass
+.ansible/
+*.retry
+*.log
+.DS_Store
+.remember/
