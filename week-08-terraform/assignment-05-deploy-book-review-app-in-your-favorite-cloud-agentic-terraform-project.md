@@ -443,7 +443,7 @@ Write the post in your own words, include at least one project image or other pr
 
 ## LinkedIn Post URL
 
-**LinkedIn Post URL:** Add your LinkedIn post URL here
+**LinkedIn Post URL:** https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-terraform-agenticai-ugcPost-7529761375083053056-Ejfz/
 
 ---
 
@@ -516,8 +516,8 @@ Write the post in your own words, include at least one project image or other pr
 - [x] Included one AI-assisted troubleshooting example
 - [x] Completed the final architecture review
 - [x] Answered all 15 reflection questions
-- [ ] Published the mandatory LinkedIn post
-- [ ] Added the LinkedIn post URL
+- [x] Published the mandatory LinkedIn post
+- [x] Added the LinkedIn post URL
 - [x] Captured all 28 required screenshots
 - [x] Confirmed that my full name is visible in the required screenshots
 - [x] Checked that no secrets or sensitive information are exposed
