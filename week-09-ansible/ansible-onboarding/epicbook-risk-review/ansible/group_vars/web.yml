@@ -1,0 +1,26 @@
+---
+app_name: epicbook
+app_repo: https://github.com/pravinmishraaws/theepicbook.git
+app_dir: /opt/epicbook
+app_user: ubuntu
+app_port: 8080
+nginx_port: 80
+node_env: production
+pm2_process_name: epicbook
+pm2_user_home: /home/ubuntu
+
+db_host: epicbook-mysql.cz06uum8i4xv.ap-southeast-5.rds.amazonaws.com
+db_port: 3306
+db_name: bookstore
+db_user: epicbook
+db_password: "{{ vault_db_password }}"
+
+common_packages:
+  - git
+  - curl
+  - rsync
+  - ca-certificates
+  - build-essential
+  - mysql-client
+  - nodejs
+  - npm
