@@ -20,61 +20,61 @@ Run an Nginx container (`myweb`) with a Bind Mount from `~/nginx-logs` to `/var/
 
 #### Screenshot 1 — Output of `docker images`
 
-Add your screenshot here.
+![Screenshot 1](screenshots/a4-ss1.png)
 
 ---
 
 #### Screenshot 2 — Output of `docker search nginx`
 
-Add your screenshot here.
+![Screenshot 2](screenshots/a4-ss2.png)
 
 ---
 
 #### Screenshot 3 — Successful `docker pull nginx` (if applicable)
 
-Add your screenshot here.
+![Screenshot 3](screenshots/a4-ss3.png)
 
 ---
 
 #### Screenshot 4 — Creation of the `~/nginx-logs` directory
 
-Add your screenshot here.
+![Screenshot 4](screenshots/a4-ss4.png)
 
 ---
 
 #### Screenshot 5 — Output of `docker run` with the Bind Mount
 
-Add your screenshot here.
+![Screenshot 5](screenshots/a4-ss5.png)
 
 ---
 
 #### Screenshot 6 — Output of `docker ps` showing the running `myweb` container
 
-Add your screenshot here.
+![Screenshot 6](screenshots/a4-ss6.png)
 
 ---
 
 #### Screenshot 7 — Browser displaying the Nginx Welcome Page
 
-Add your screenshot here.
+![Screenshot 7](screenshots/a4-ss7.png)
 
 ---
 
 #### Screenshot 8 — Output of `ls ~/nginx-logs` showing `access.log` and `error.log`
 
-Add your screenshot here.
+![Screenshot 8](screenshots/a4-ss8.png)
 
 ---
 
 #### Screenshot 9 — Successful removal of the container
 
-Add your screenshot here.
+![Screenshot 9](screenshots/a4-ss9.png)
 
 ---
 
 #### Screenshot 10 — Output of `ls ~/nginx-logs` confirming the log files remain after the container has been removed
 
-Add your screenshot here.
+![Screenshot 10](screenshots/a4-ss10.png)
 
 ---
 
@@ -88,73 +88,73 @@ Create a custom network `mynetwork` and a Docker volume `shared-data`, build and
 
 #### Screenshot 1 — Project folder structure
 
-Add your screenshot here.
+![Screenshot 11](screenshots/a4-ss11.png)
 
 ---
 
 #### Screenshot 2 — Output of `docker network create mynetwork`
 
-Add your screenshot here.
+![Screenshot 12](screenshots/a4-ss12.png)
 
 ---
 
 #### Screenshot 3 — Output of `docker volume create shared-data`
 
-Add your screenshot here.
+![Screenshot 13](screenshots/a4-ss13.png)
 
 ---
 
 #### Screenshot 4 — Backend Dockerfile
 
-Add your screenshot here.
+![Screenshot 14](screenshots/a4-ss14.png)
 
 ---
 
 #### Screenshot 5 — Successful backend image build
 
-Add your screenshot here.
+![Screenshot 15](screenshots/a4-ss15.png)
 
 ---
 
 #### Screenshot 6 — Frontend Dockerfile
 
-Add your screenshot here.
+![Screenshot 16](screenshots/a4-ss16.png)
 
 ---
 
 #### Screenshot 7 — Successful frontend image build
 
-Add your screenshot here.
+![Screenshot 17](screenshots/a4-ss17.png)
 
 ---
 
 #### Screenshot 8 — Output of `docker ps` showing both containers
 
-Add your screenshot here.
+![Screenshot 18](screenshots/a4-ss18.png)
 
 ---
 
 #### Screenshot 9 — Successful execution of `docker exec backend curl http://localhost/write`
 
-Add your screenshot here.
+![Screenshot 19](screenshots/a4-ss19.png)
 
 ---
 
 #### Screenshot 10 — Browser displaying "Hello from Backend!"
 
-Add your screenshot here.
+![Screenshot 20](screenshots/a4-ss20.png)
 
 ---
 
 #### Screenshot 11 — Browser displaying "Test Data 1" after the first update
 
-Add your screenshot here.
+![Screenshot 21](screenshots/a4-ss21.png)
 
 ---
 
 #### Screenshot 12 — Browser displaying "Test Data 2 - New Update" after the second update
 
-Add your screenshot here.
+![Screenshot 22](screenshots/a4-ss22.png)
 
 ---
 
@@ -190,9 +190,9 @@ Add your screenshot here.
 
 # Completion Checklist
 
-- [ ] Task 1: Bind-mounted persistent logs verified before and after container removal (Screenshots 1–10)
-- [ ] Task 2: Docker volume shared between frontend and backend verified (Screenshots 1–12)
-- [ ] No sensitive information exposed
+- [x] Task 1: Bind-mounted persistent logs verified before and after container removal (Screenshots 1–10)
+- [x] Task 2: Docker volume shared between frontend and backend verified (Screenshots 1–12)
+- [x] No sensitive information exposed
 
 ---
 

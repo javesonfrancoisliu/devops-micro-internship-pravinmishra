@@ -20,7 +20,7 @@ Clone `https://github.com/pravinmishraaws/my-react-app.git` and create a `.docke
 
 #### Screenshot 1 — Contents of the `.dockerignore` file
 
-Add your screenshot here.
+![Screenshot 1](screenshots/a2-ss1.png)
 
 ---
 
@@ -34,13 +34,13 @@ Create `Dockerfile.single`, build `react-single`, and run it on port 3000.
 
 #### Screenshot 2 — Contents of `Dockerfile.single`
 
-Add your screenshot here.
+![Screenshot 2](screenshots/a2-ss2.png)
 
 ---
 
 #### Screenshot 3 — Browser displaying the application running from the single-stage container
 
-Add your screenshot here.
+![Screenshot 3](screenshots/a2-ss3.png)
 
 ---
 
@@ -54,13 +54,13 @@ Create a multi-stage Dockerfile with separate build and Nginx runtime stages, bu
 
 #### Screenshot 4 — Contents of the multi-stage Dockerfile
 
-Add your screenshot here.
+![Screenshot 4](screenshots/a2-ss4.png)
 
 ---
 
 #### Screenshot 5 — Browser displaying the application running from the multi-stage container
 
-Add your screenshot here.
+![Screenshot 5](screenshots/a2-ss5.png)
 
 ---
 
@@ -74,7 +74,7 @@ Compare the single-stage and multi-stage image sizes and calculate the percentag
 
 #### Screenshot 6 — Docker image list showing both image sizes
 
-Add your screenshot here.
+![Screenshot 6](screenshots/a2-ss6.png)
 
 ---
 
@@ -88,15 +88,18 @@ Write a 5–8 line analysis covering the percentage reduction, security benefits
 
 #### Screenshot 7 — Analysis included in your submission document
 
-Add your screenshot here.
+![Screenshot 7](screenshots/a2-ss7.png)
 
 ---
 
 ### Notes
 
-Write your analysis here.
-
-Write your answer here.
+1. Size: the single-stage image is 799MB and the multi-stage image is 94.7MB, an 88.1% reduction ((799 - 94.7) / 799) by disk usage; by content size it is 154MB vs 26.6MB, 82.7% smaller.
+2. Security: the runtime image holds only Nginx and the static build, so compilers, npm, source code and node_modules never ship.
+3. Attack surface: fewer packages and no Node.js runtime mean fewer CVEs to scan and patch, and no extra tooling for an attacker to reuse.
+4. Distribution: a 94.7MB image pulls and starts faster on a new host, and registry storage and transfer cost less.
+5. Caching: package*.json is copied and npm ci runs before COPY . ., so the dependency layer is reused when only source files change.
+6. A .dockerignore keeps node_modules, build and .env out of the build context, which speeds up builds and keeps secrets out of layers.
 
 ---
 
@@ -142,13 +145,13 @@ Add your screenshot here.
 
 # Completion Checklist
 
-- [ ] Task 1: `.dockerignore` created (Screenshot 1)
-- [ ] Task 2: Single-stage image built and verified (Screenshots 2–3)
-- [ ] Task 3: Multi-stage image built and verified (Screenshots 4–5)
-- [ ] Task 4: Image sizes compared (Screenshot 6)
-- [ ] Task 5: Analysis written (Screenshot 7 & Notes)
+- [x] Task 1: `.dockerignore` created (Screenshot 1)
+- [x] Task 2: Single-stage image built and verified (Screenshots 2–3)
+- [x] Task 3: Multi-stage image built and verified (Screenshots 4–5)
+- [x] Task 4: Image sizes compared (Screenshot 6)
+- [x] Task 5: Analysis written (Screenshot 7 & Notes)
 - [ ] Task 6: Optional production optimizations explored
-- [ ] No sensitive information exposed
+- [x] No sensitive information exposed
 
 ---
 
