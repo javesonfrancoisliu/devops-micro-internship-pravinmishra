@@ -1,0 +1,8 @@
+app/node_modules
+app/.git
+app/db
+app/*.md
+app/.travis.yml
+app/.eslintrc.json
+app/.eslintignore
+.env

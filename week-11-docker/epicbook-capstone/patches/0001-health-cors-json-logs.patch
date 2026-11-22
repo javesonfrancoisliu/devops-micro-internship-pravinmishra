@@ -1,0 +1,43 @@
+diff --git a/server.js b/server.js
+index 60059bb..6c4dd27 100644
+--- a/server.js
++++ b/server.js
+@@ -20,6 +20,38 @@ app.use(express.json());
+ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+ app.set("view engine", "handlebars");
+ 
++const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").filter(Boolean);
++
++app.use((req, res, next) => {
++  res.on("finish", () => {
++    console.log(JSON.stringify({ time: new Date().toISOString(), method: req.method, url: req.originalUrl, status: res.statusCode }));
++  });
++  next();
++});
++
++app.use("/api", (req, res, next) => {
++  const origin = req.headers.origin;
++  if (origin && allowedOrigins.includes(origin)) {
++    res.set("Access-Control-Allow-Origin", origin);
++    res.set("Vary", "Origin");
++    res.set("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
++    res.set("Access-Control-Allow-Headers", "Content-Type");
++  }
++  if (req.method === "OPTIONS") {
++    return res.sendStatus(204);
++  }
++  next();
++});
++
++app.get("/health", async (req, res) => {
++  try {
++    await db.sequelize.authenticate();
++    res.json({ status: "ok" });
++  } catch (error) {
++    res.status(503).json({ status: "database unavailable" });
++  }
++});
++
+ require("./routes/cart-api-routes")(app);
+ 
+ console.log("going to html route");
