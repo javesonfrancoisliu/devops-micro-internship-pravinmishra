@@ -20,7 +20,7 @@ Confirm your production-grade EpicBook containers from this week's capstone are 
 
 #### Screenshot 1 — `docker ps` showing your running EpicBook application container
 
-Add your screenshot here.
+![EpicBook containers running (docker ps)](screenshots/a7-ss1.png)
 
 ---
 
@@ -34,7 +34,7 @@ Create a `CLAUDE.md` in your workspace that tells Claude this project only ever 
 
 #### Screenshot 2 — `CLAUDE.md` open in VS Code showing the project overview, hardening workflow, and safety rules
 
-Add your screenshot here.
+![CLAUDE.md with overview, workflow and safety rules](screenshots/a7-ss2.png)
 
 ---
 
@@ -48,7 +48,7 @@ Ask Claude Code to inspect your running container using only read-only Docker co
 
 #### Screenshot 3 — Claude's proposed audit plan and read-only inspection
 
-Add your screenshot here.
+![Claude read-only inspection and six-check audit plan](screenshots/a7-ss3.png)
 
 ---
 
@@ -62,13 +62,13 @@ Write a Bash script that runs `docker inspect` and `docker image inspect` agains
 
 #### Screenshot 4 — Your audit script open in an editor, showing the six check functions
 
-Add your screenshot here.
+![docker-audit.sh with six check functions (docker-audit/docker-audit.sh)](screenshots/a7-ss4.png)
 
 ---
 
 #### Screenshot 5 — Terminal output of `bash -n` confirming the script has no syntax errors, and `ls -l` showing it is executable
 
-Add your screenshot here.
+![bash -n syntax check and executable bit](screenshots/a7-ss5.png)
 
 ---
 
@@ -82,7 +82,7 @@ Run the script against your running EpicBook container and record the results ho
 
 #### Screenshot 6 — Script output showing your Full Name and all six check results
 
-Add your screenshot here.
+![First audit run: 5 passed, 0 warnings, 1 failure (runs as root)](screenshots/a7-ss6.png)
 
 ---
 
@@ -96,13 +96,13 @@ Turn the script into a Claude Code skill restricted to read-only tools, and run 
 
 #### Screenshot 7 — `SKILL.md` frontmatter showing the tool restrictions and safety rules
 
-Add your screenshot here.
+![SKILL.md frontmatter with allowed-tools and safety rules (docker-audit/.claude/skills/docker-audit/SKILL.md)](screenshots/a7-ss7.png)
 
 ---
 
 #### Screenshot 8 — `/docker-audit` output showing the findings and Claude's recommended fix
 
-Add your screenshot here.
+![/docker-audit findings and recommended fix](screenshots/a7-ss8.png)
 
 ---
 
@@ -116,19 +116,19 @@ Edit your Dockerfile to apply Claude's recommendation, rebuild the image, recrea
 
 #### Screenshot 9 — Your edited Dockerfile line(s) showing the fix
 
-Add your screenshot here.
+![Edited frontend Dockerfile (non-root base image, USER 101, port 8080)](screenshots/a7-ss9.png)
 
 ---
 
 #### Screenshot 10 — `docker build` and `docker run` succeeding with the rebuilt image
 
-Add your screenshot here.
+![docker compose build and recreate succeeding](screenshots/a7-ss10.png)
 
 ---
 
 #### Screenshot 11 — Second `/docker-audit` run showing the previously failed check now passing
 
-Add your screenshot here.
+![Second audit run: 6 passed, 0 warnings, 0 failures](screenshots/a7-ss11.png)
 
 ---
 
@@ -136,7 +136,15 @@ Add your screenshot here.
 
 In one paragraph, explain why the `/docker-audit` skill is allowed to gather evidence and recommend a Dockerfile fix, but is never allowed to edit the Dockerfile or rebuild the image itself.
 
-Add your answer here
+The skill gathers evidence and recommends, but never changes anything, because a hardening audit must be safe to run at any time on any container. Its `allowed-tools` list only permits `docker ps`, `docker inspect`, `docker image inspect`, the audit script and reading files, so it cannot build, stop, remove or edit even if it tried, and `CLAUDE.md` repeats the rule in words. Keeping the decision with the owner matters because a Dockerfile fix has side effects Claude cannot see from inspect output alone: here the non-root nginx image also moved the port from 80 to 8080, which meant changing the frontend config, the compose healthcheck and the proxy upstream together, and the owner reviews and applies that as one change. Separating evidence from action also keeps a mistaken or injected recommendation from damaging a running service.
+
+**Run notes (honest record)**
+
+- Target container: `epicbook-frontend-1`. The backend already runs as the non-root `node` user. The frontend, proxy and db containers run as root by default.
+- The `claude -p` runs happened inside a sandbox that blocks the Docker socket. The skill noticed, re-ran the script outside it, and reported the earlier sandboxed reports as false results. Those extra reports are git-ignored.
+- The Dockerfile edit, rebuild and recreate were done by me, not by the skill. The recommendation also required `listen 8080` in `frontend/nginx.conf`, the healthcheck port in `docker-compose.yml`, and `frontend:8080` in `proxy/nginx.conf`.
+- Screenshot 10 shows the end of the build output only (last lines), and the `docker compose ps` list is as returned after recreate.
+- Files: [`docker-audit/docker-audit.sh`](docker-audit/docker-audit.sh), [`docker-audit/CLAUDE.md`](docker-audit/CLAUDE.md), [`docker-audit/.claude/skills/docker-audit/SKILL.md`](docker-audit/.claude/skills/docker-audit/SKILL.md).
 
 ---
 

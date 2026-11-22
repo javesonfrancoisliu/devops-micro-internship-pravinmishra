@@ -5,7 +5,7 @@
 | Path | Upstream | Why |
 |---|---|---|
 | `/healthz` | answered by the proxy (`200 ok`) | liveness without touching upstreams, not logged |
-| `/assets/` | `frontend:80` | static files, gzip_static, 7 day cache |
+| `/assets/` | `frontend:8080` | static files, gzip_static, 7 day cache |
 | `/api/` | `backend:8080` | JSON API |
 | `/` | `backend:8080` | the app renders pages server-side, so the backend serves HTML |
 

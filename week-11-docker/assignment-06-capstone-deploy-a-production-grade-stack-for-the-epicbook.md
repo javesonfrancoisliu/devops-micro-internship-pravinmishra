@@ -71,11 +71,11 @@ WORKDIR /site
 COPY site/ ./
 RUN find . -type f \( -name '*.css' -o -name '*.js' -o -name '*.svg' \) -exec gzip -9 -k {} \;
 
-FROM nginx:1.27-alpine
-RUN rm -f /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d/site.conf
+FROM nginxinc/nginx-unprivileged:1.27-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=assets /site /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8080
+USER 101
 ```
 
 **Layer optimizations**
@@ -154,7 +154,7 @@ services:
     networks:
       - front-tier
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -222,6 +222,8 @@ networks:
 volumes:
   db-data:
 ```
+
+The frontend Dockerfile shown is the final version after the Assignment 7 audit (non-root, port 8080); the live VM run for the screenshots was the earlier nginx:1.27-alpine frontend on port 80.
 
 Networks: `front-tier` (proxy, frontend, backend) and `back-tier` (`internal: true`, backend and db). Volume: `db-data`.
 

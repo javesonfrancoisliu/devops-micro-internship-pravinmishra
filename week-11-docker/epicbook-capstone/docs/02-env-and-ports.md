@@ -30,7 +30,7 @@ Application: The EpicBook (`github.com/pravinmishraaws/theepicbook`), a Node.js 
 | Port | Service | Exposed to |
 |---|---|---|
 | 80 | proxy | internet (host port `HTTP_PORT`) |
-| 80 | frontend | front-tier network only |
+| 8080 | frontend (runs as uid 101) | front-tier network only |
 | 8080 | backend | front-tier network only |
 | 3306 | db | back-tier network only (internal, no route outside) |
 
@@ -42,3 +42,7 @@ Application: The EpicBook (`github.com/pravinmishraaws/theepicbook`), a Node.js 
 | `/var/log/nginx` | bind mount `./logs/proxy` | proxy access and error logs |
 | `./backups` | host directory | `mysqldump` snapshots |
 | `/docker-entrypoint-initdb.d` | bind mount `./db-init` (read-only) | schema and seed SQL, runs on first start only |
+
+## Hardening change (Assignment 7)
+
+The frontend image moved to `nginxinc/nginx-unprivileged:1.27-alpine` (user 101, port 8080) after the container audit flagged it as running as root. The proxy upstream and the frontend healthcheck use port 8080.
