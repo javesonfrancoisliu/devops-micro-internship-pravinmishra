@@ -18,51 +18,55 @@ Create a Docker Hub repository (`my-react-app`), log in from the CLI, tag and pu
 
 ### Evidence
 
+Docker Hub repository: https://hub.docker.com/r/javesonfrancoisliuu/my-react-app
+
+Note: the first push was arm64 only (built on an Apple Silicon Mac), so the amd64 VM could not pull it. The image was rebuilt with `docker buildx build --platform linux/amd64,linux/arm64 --push`, and the pull in Screenshot 6 ran on the amd64 VM.
+
 #### Screenshot 1 — Docker Hub repository (`my-react-app`)
 
-Add your screenshot here.
+![Screenshot 1](screenshots/a5-ss1.png)
 
 ---
 
 #### Screenshot 2 — Successful `docker login`
 
-Add your screenshot here.
+![Screenshot 2](screenshots/a5-ss2.png)
 
 ---
 
 #### Screenshot 3 — Successful `docker tag`
 
-Add your screenshot here.
+![Screenshot 3](screenshots/a5-ss3.png)
 
 ---
 
 #### Screenshot 4 — Successful `docker push`
 
-Add your screenshot here.
+![Screenshot 4](screenshots/a5-ss4.png)
 
 ---
 
 #### Screenshot 5 — Docker Hub repository showing the uploaded image
 
-Add your screenshot here.
+![Screenshot 5](screenshots/a5-ss5.png)
 
 ---
 
 #### Screenshot 6 — Successful `docker pull`
 
-Add your screenshot here.
+![Screenshot 6](screenshots/a5-ss6.png)
 
 ---
 
 #### Screenshot 7 — Output of `docker ps`
 
-Add your screenshot here.
+![Screenshot 7](screenshots/a5-ss7.png)
 
 ---
 
 #### Screenshot 8 — Browser displaying the running React application
 
-Add your screenshot here.
+![Screenshot 8](screenshots/a5-ss8.png)
 
 ---
 
@@ -99,11 +103,11 @@ Add your screenshot here.
 
 # Completion Checklist
 
-- [ ] Docker Hub account and repository created
-- [ ] Docker image tagged and pushed successfully (Screenshots 1–5)
-- [ ] Docker image pulled and container run successfully (Screenshots 6–7)
-- [ ] React application accessible in the browser (Screenshot 8)
-- [ ] No sensitive information exposed
+- [x] Docker Hub account and repository created
+- [x] Docker image tagged and pushed successfully (Screenshots 1–5)
+- [x] Docker image pulled and container run successfully (Screenshots 6–7)
+- [x] React application accessible in the browser (Screenshot 8)
+- [x] No sensitive information exposed
 
 ---
 
