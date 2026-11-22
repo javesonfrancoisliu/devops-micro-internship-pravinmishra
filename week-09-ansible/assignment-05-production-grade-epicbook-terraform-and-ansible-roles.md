@@ -562,13 +562,13 @@ The first run stopped at the `epicbook` role with `could not create work tree di
 
 Paste your LinkedIn post URL here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530280437118857216-ckyJ/
 
 ---
 
 #### Screenshot — Published LinkedIn post
 
-Add your screenshot here.
+![Published LinkedIn post](screenshots/a5-ss-linkedin.png)
 
 ---
 
@@ -634,7 +634,7 @@ The `/opt/epicbook` permission error, then Nginx still serving the default page 
 
 **10. What security improvement would you make before using this setup in production?**
 
-I would add HTTPS with a certificate on Nginx, move the database password to AWS Secrets Manager, use private subnets with SSM or a bastion instead of public SSH, turn on Multi-AZ RDS with backups and deletion protection, keep SSH host key checking on, and add monitoring and alerts.
+I would add HTTPS with a certificate on Nginx, move the database password to AWS Secrets Manager, use private subnets with SSM or a bastion instead of public SSH, turn on Multi-AZ RDS with backups and deletion protection, keep SSH host key checking on, pin the app to a commit SHA and install with `npm ci` instead of cloning the latest code, run the app under a dedicated service account instead of the login user, and add monitoring and alerts.
 
 ---
 
@@ -714,8 +714,8 @@ Confirm that the following files are included in your GitHub repository or assig
 - [x] Playbook completes with `failed=0`
 - [x] Screenshots 1–27 are included
 - [x] Assignment questions are answered
-- [ ] LinkedIn post published
-- [ ] LinkedIn post URL added
+- [x] LinkedIn post published
+- [x] LinkedIn post URL added
 - [x] No sensitive information is exposed
 
 ---

@@ -389,7 +389,7 @@ Terraform builds an Azure Ubuntu VM, and a multi-play Ansible playbook deploys t
 
 #### Screenshot 15 — Published LinkedIn post showing the text and at least one deployment screenshot
 
-Add your screenshot here.
+![Screenshot 15](screenshots/a4-ss15.png)
 
 ---
 
@@ -397,7 +397,7 @@ Add your screenshot here.
 
 Paste your LinkedIn post URL here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530279943574953984-KqLd/
 
 ---
 
@@ -533,11 +533,11 @@ Confirm that the following files are included in your assignment folder:
 - [x] Task 8: Mini Finance website loads in the browser
 - [x] Task 8: Azure VM public IP is visible in the browser screenshot
 - [x] Task 9: `README.md` completed
-- [ ] Screenshots 1–15 are included
+- [x] Screenshots 1–15 are included
 - [x] `inventory.ini`, `site.yml`, and `README.md` are pasted as editable text
 - [x] Assignment questions are answered
-- [ ] LinkedIn post published with Anyone visibility
-- [ ] LinkedIn post URL added
+- [x] LinkedIn post published with Anyone visibility
+- [x] LinkedIn post URL added
 - [x] No sensitive information is exposed
 
 ---
