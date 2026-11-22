@@ -482,7 +482,7 @@ Write the post in your own words and include at least one deployment screenshot 
 - [x] Loaded EpicBook through the EC2 public IP
 - [x] Verified product viewing
 - [x] Verified Add to Cart
-- [ ] Verified the checkout or order workflow
+- [x] Verified the checkout or order workflow
 - [x] Confirmed application actions in Amazon RDS
 - [x] Completed `terraform destroy`
 - [x] Published the required LinkedIn post

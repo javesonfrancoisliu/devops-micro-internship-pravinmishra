@@ -496,7 +496,7 @@ Write the post in your own words, include at least one project image or other pr
 - [x] Completed `terraform fmt`
 - [x] Completed `terraform validate`
 - [x] Reviewed `terraform plan`
-- [ ] Completed the Terraform Engineer review
+- [x] Completed the Terraform Engineer review
 - [x] Completed the Architecture and Security review
 - [x] Applied the infrastructure only after human approval
 - [x] Deployed and configured the backend
