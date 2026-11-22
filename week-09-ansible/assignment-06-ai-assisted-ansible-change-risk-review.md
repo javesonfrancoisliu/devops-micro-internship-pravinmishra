@@ -436,13 +436,13 @@ A wrong judgement would be applied at machine speed: an unwanted restart, delete
 
 Paste your LinkedIn post URL here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530281610592628737-vBEI/
 
 ---
 
 #### Screenshot — Published LinkedIn post
 
-Add your screenshot here.
+![Published LinkedIn post](screenshots/a6-ss-linkedin.png)
 
 ---
 
@@ -493,8 +493,8 @@ Confirm that the following files are included in your GitHub repository or assig
 - [x] Change summary completed
 - [x] All screenshots added
 - [x] All notes answered
-- [ ] LinkedIn post published
-- [ ] LinkedIn post URL added
+- [x] LinkedIn post published
+- [x] LinkedIn post URL added
 - [x] No sensitive information exposed
 
 ---

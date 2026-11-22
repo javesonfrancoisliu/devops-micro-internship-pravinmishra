@@ -311,13 +311,13 @@ A multi-play Ansible playbook that installs Nginx on two Ubuntu servers, deploys
 
 Paste your LinkedIn post URL here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530279157751128064-cOjl/
 
 ---
 
 ### Screenshot — Published LinkedIn post
 
-Add your screenshot here.
+![Published LinkedIn post](screenshots/a3-ss-linkedin.png)
 
 ---
 
@@ -410,8 +410,8 @@ Confirm that the following files are included in your assignment folder:
 - [x] `inventory.ini`, `site.yml`, and `README.md` are pasted as editable text
 - [x] Both website URLs are included
 - [x] Assignment questions are answered
-- [ ] LinkedIn post published
-- [ ] LinkedIn post URL added
+- [x] LinkedIn post published
+- [x] LinkedIn post URL added
 - [x] No sensitive information is exposed
 
 ---
