@@ -18,6 +18,7 @@ kc() {
 
 record() {
   local level="$1" check="$2" evidence="$3"
+  evidence=$(printf '%s' "$evidence" | perl -CSD -pe 's/[\x{0000}-\x{001F}\x{007F}-\x{009F}\x{2028}\x{2029}\x{202A}-\x{202E}\x{2066}-\x{2069}]/?/g')
   LINES+=("[$level] $check: $evidence")
   case "$level" in
     PASS) PASS=$((PASS + 1)) ;;
