@@ -2,7 +2,7 @@
 name: k8s-triage
 description: Run the read-only Kubernetes triage on the Book Review App, explain each finding with evidence, and recommend one kubectl fix without running it. Use when asked to triage, diagnose or check the health of the Book Review App on the kind cluster.
 argument-hint: [namespace]
-allowed-tools: Read, Bash(bash k8s-triage.sh:*), Bash(kubectl --context kind-w12-c get:*), Bash(kubectl --context kind-w12-c -n bookreview get:*), Bash(kubectl --context kind-w12-c -n bookreview describe:*), Bash(kubectl --context kind-w12-c -n bookreview logs:*)
+allowed-tools: Read, Bash(bash k8s-triage.sh:*), Bash(kubectl --context kind-w12-c -n bookreview get pods:*), Bash(kubectl --context kind-w12-c -n bookreview get events:*), Bash(kubectl --context kind-w12-c -n bookreview get endpointslices:*), Bash(kubectl --context kind-w12-c -n bookreview get deployments:*), Bash(kubectl --context kind-w12-c -n bookreview get services:*), Bash(kubectl --context kind-w12-c -n bookreview get replicasets:*), Bash(kubectl --context kind-w12-c -n bookreview describe:*), Bash(kubectl --context kind-w12-c -n bookreview logs:*)
 ---
 
 # k8s-triage

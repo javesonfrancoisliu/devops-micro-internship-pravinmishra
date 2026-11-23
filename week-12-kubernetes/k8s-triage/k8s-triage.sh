@@ -18,7 +18,7 @@ kc() {
 
 record() {
   local level="$1" check="$2" evidence="$3"
-  evidence=$(printf '%s' "$evidence" | perl -CSD -pe 's/[\x{0000}-\x{001F}\x{007F}-\x{009F}\x{2028}\x{2029}\x{202A}-\x{202E}\x{2066}-\x{2069}]/?/g')
+  evidence=$(printf '%s' "$evidence" | perl -MEncode -0777 -pe '$_ = decode("UTF-8", $_, Encode::FB_DEFAULT); s/[\p{C}\p{Zl}\p{Zp}\p{Default_Ignorable_Code_Point}]/?/g; $_ = encode("UTF-8", $_)') || evidence="[evidence redacted: sanitizer failed]"
   LINES+=("[$level] $check: $evidence")
   case "$level" in
     PASS) PASS=$((PASS + 1)) ;;
