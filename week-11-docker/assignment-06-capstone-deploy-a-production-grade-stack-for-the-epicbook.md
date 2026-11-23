@@ -20,13 +20,15 @@ Explore the `theepicbook` repository, identify its components (UI, API, DB, work
 
 #### Deliverable — `docs/01-architecture-diagram.png`
 
-Add your diagram or link here.
+![EpicBook architecture](epicbook-capstone/docs/01-architecture-diagram.png)
 
 ---
 
 #### Deliverable — `docs/02-env-and-ports.md`
 
-Add your content or link here.
+Source of truth: [`epicbook-capstone/docs/02-env-and-ports.md`](epicbook-capstone/docs/02-env-and-ports.md).
+
+Components: Express app with server-side Handlebars UI, `/api/cart` API, MySQL `bookstore`. Required variables: `NODE_ENV`, `PORT`, `JAWSDB_URL`, `ALLOWED_ORIGINS`, `MYSQL_*`. Ports: 80 public (proxy), 8080 backend and 3306 db internal only. Persistence: volume `db-data`, bind mount `logs/proxy`, `backups/`.
 
 ---
 
@@ -40,7 +42,64 @@ Create minimal multi-stage Dockerfiles for the frontend and backend services, wi
 
 #### Deliverable — `frontend/Dockerfile`, `backend/Dockerfile`, and `.dockerignore` files, with a note on layer optimizations and security benefits
 
-Add your content or link here.
+Files: [`backend/Dockerfile`](epicbook-capstone/backend/Dockerfile), [`frontend/Dockerfile`](epicbook-capstone/frontend/Dockerfile), `backend/.dockerignore`, `frontend/.dockerignore`.
+
+**`epicbook-capstone/backend/Dockerfile`**
+
+```dockerfile
+FROM node:18-alpine AS deps
+WORKDIR /app
+COPY app/package*.json ./
+RUN npm ci --omit=dev
+
+FROM node:18-alpine
+ENV NODE_ENV=production \
+    PORT=8080
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --chown=node:node app/ ./
+USER node
+EXPOSE 8080
+CMD ["node", "server.js"]
+```
+
+**`epicbook-capstone/frontend/Dockerfile`**
+
+```dockerfile
+FROM alpine:3.20 AS assets
+WORKDIR /site
+COPY site/ ./
+RUN find . -type f \( -name '*.css' -o -name '*.js' -o -name '*.svg' \) -exec gzip -9 -k {} \;
+
+FROM nginxinc/nginx-unprivileged:1.27-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=assets /site /usr/share/nginx/html
+EXPOSE 8080
+USER 101
+```
+
+**Layer optimizations**
+
+- Backend is multi-stage: `deps` runs `npm ci --omit=dev`, the runtime stage copies only `node_modules` and the app. No dev dependencies.
+- `package.json` is copied before the source, so the dependency layer stays cached until dependencies change.
+- Frontend: a build stage pre-compresses css, js and svg with `gzip -9 -k`, and nginx serves them with `gzip_static`.
+- `.dockerignore` keeps `.git`, `node_modules`, logs and `.env` out of the build context.
+
+**Security benefits**
+
+- Alpine base images (`node:18-alpine`, `nginx:1.27-alpine`) give a small attack surface.
+- The backend runs as the non-root `node` user, with a read-only root filesystem, `cap_drop: ALL` and `no-new-privileges`.
+- No secret is baked into an image, values come from `.env` at runtime.
+
+**Image sizes**
+
+| Image | Size |
+|---|---|
+| Naive single-stage backend (`node:18`, `npm install`, copy everything) | 1.79 GB |
+| `epicbook-backend:1.0` (multi-stage, alpine, production dependencies) | 281 MB |
+| `epicbook-frontend:1.0` (nginx alpine plus static assets) | 141 MB |
+
+Backend reduction: 1.79 GB to 281 MB, about 84% smaller (measured on my Mac; the amd64 build on the VM is 283 MB).
 
 ---
 
@@ -54,7 +113,119 @@ Author `docker-compose.yml` defining the reverse-proxy, frontend, backend, and d
 
 #### Deliverable — `docker-compose.yml`
 
-Add your content or link here.
+File: [`epicbook-capstone/docker-compose.yml`](epicbook-capstone/docker-compose.yml)
+
+```yaml
+name: epicbook
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  proxy:
+    image: nginx:1.27-alpine
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./logs/proxy:/var/log/nginx
+    networks:
+      - front-tier
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging: *default-logging
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    image: epicbook-frontend:1.0
+    networks:
+      - front-tier
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging: *default-logging
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    image: epicbook-backend:1.0
+    environment:
+      NODE_ENV: production
+      PORT: "8080"
+      JAWSDB_URL: mysql://epicbook:${DB_PASSWORD}@db:3306/bookstore
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost}
+    networks:
+      - front-tier
+      - back-tier
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: bookstore
+      MYSQL_USER: epicbook
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - back-tier
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    logging: *default-logging
+    restart: unless-stopped
+
+networks:
+  front-tier:
+  back-tier:
+    internal: true
+
+volumes:
+  db-data:
+```
+
+The frontend Dockerfile shown is the final version after the Assignment 7 audit (non-root, port 8080); the live VM run for the screenshots was the earlier nginx:1.27-alpine frontend on port 80.
+
+Networks: `front-tier` (proxy, frontend, backend) and `back-tier` (`internal: true`, backend and db). Volume: `db-data`.
 
 ---
 
@@ -68,7 +239,7 @@ Add a database healthcheck, a `/health` endpoint check on the backend, and `depe
 
 #### Deliverable — `docs/03-healthchecks-and-depends-on.md`
 
-Add your content or link here.
+[`epicbook-capstone/docs/03-healthchecks-and-depends-on.md`](epicbook-capstone/docs/03-healthchecks-and-depends-on.md): db `mysqladmin ping`, backend `GET /health` (503 when the database is down), `depends_on` with `service_healthy` (db, then backend and frontend, then proxy).
 
 ---
 
@@ -82,7 +253,7 @@ Configure Nginx or Traefik to route `/api` to the backend and `/` to the fronten
 
 #### Deliverable — `docs/04-proxy-routing-and-cors.md`
 
-Add your content or link here.
+[`epicbook-capstone/docs/04-proxy-routing-and-cors.md`](epicbook-capstone/docs/04-proxy-routing-and-cors.md): `/api/` and `/` to the backend, `/assets/` to the frontend, runtime DNS resolution, CORS allowlist from `ALLOWED_ORIGINS`.
 
 ---
 
@@ -96,13 +267,13 @@ Mount the database data directory to a named volume, document a snapshot/backup 
 
 #### Deliverable — `docs/05-persistence-and-backup.md`
 
-Add your content or link here.
+[`epicbook-capstone/docs/05-persistence-and-backup.md`](epicbook-capstone/docs/05-persistence-and-backup.md): named volume `db-data`, `mysqldump` backup and restore scripts, live restore drill (carts 4, then 0, then 4).
 
 ---
 
 #### Screenshot — System state before and after a manual snapshot restore cycle
 
-Add your screenshot here.
+![Restore cycle: books=54 carts=4, loss to carts=0, restore to carts=4](screenshots/a6-ss1.png)
 
 ---
 
@@ -116,13 +287,13 @@ Bind-mount the reverse proxy log directory to the host, redirect application log
 
 #### Deliverable — `docs/06-logging-layout.md`
 
-Add your content or link here.
+[`epicbook-capstone/docs/06-logging-layout.md`](epicbook-capstone/docs/06-logging-layout.md): proxy JSON log bind-mounted to `logs/proxy`, backend JSON request log on stdout, json-file rotation 10m x 3.
 
 ---
 
 #### Screenshot — Live running JSON container log entries
 
-Add your screenshot here.
+![Live JSON log entries from proxy and backend](screenshots/a6-ss2.png)
 
 ---
 
@@ -136,19 +307,19 @@ Provision a VM per the security requirements (SSH restricted to your IP; HTTP/HT
 
 #### Deliverable — `docs/07-cloud-deployment-notes.md` (ports, firewall rules, deployment link)
 
-Add your content or link here.
+[`epicbook-capstone/docs/07-cloud-deployment-notes.md`](epicbook-capstone/docs/07-cloud-deployment-notes.md): AWS EC2 t3.micro at `43.216.21.28`, SSH from my IP only, HTTP 80 open, deploy commands.
 
 ---
 
 #### Screenshot — Browser showing successful web UI retrieval via the cloud public IP
 
-Add your screenshot here.
+![EpicBook home page on the public IP](screenshots/a6-ss3.png)
 
 ---
 
 #### Screenshot — Active page interaction confirming backend API data fetches succeed
 
-Add your screenshot here.
+![Cart page showing data fetched from the backend API](screenshots/a6-ss4.png)
 
 ---
 
@@ -162,13 +333,13 @@ Build a pipeline (Azure Pipelines or GitHub Actions) that builds and tags multi-
 
 #### Deliverable — `docs/08-ci-cd-pipeline.md`
 
-Add your content or link here.
+[`epicbook-capstone/docs/08-ci-cd-pipeline.md`](epicbook-capstone/docs/08-ci-cd-pipeline.md): optional task, not built. The file records the planned GitHub Actions design.
 
 ---
 
 #### Screenshot (optional) — Completed automated pipeline run
 
-Add your screenshot here.
+Not applicable, the optional pipeline was not built.
 
 ---
 
@@ -182,13 +353,13 @@ Inject faults (drop backend/database dependencies) and evaluate frontend error h
 
 #### Deliverable — `docs/09-runbook.md`
 
-Add your content or link here.
+[`epicbook-capstone/docs/09-runbook.md`](epicbook-capstone/docs/09-runbook.md): start, stop, restart, secret rotation, disaster recovery, where to look.
 
 ---
 
 #### Deliverable — `docs/10-reliability-tests.md`
 
-Add your content or link here.
+[`epicbook-capstone/docs/10-reliability-tests.md`](epicbook-capstone/docs/10-reliability-tests.md): backend stop (502, assets 200), database stop (503 health, backend stays up), network isolation, restore, memory exhaustion.
 
 ---
 
@@ -224,18 +395,18 @@ Add your screenshot here.
 
 # Completion Checklist
 
-- [ ] Task 0: Architecture diagram and env/ports doc completed
-- [ ] Task 1: Multi-stage Dockerfiles and `.dockerignore` files created
-- [ ] Task 2: `docker-compose.yml` with isolated networks and volumes authored
-- [ ] Task 3: Healthchecks and `depends_on` conditions configured
-- [ ] Task 4: Reverse proxy routing and CORS configured
-- [ ] Task 5: Persistence and backup plan tested (Screenshot)
-- [ ] Task 6: Logging and observability configured (Screenshot)
-- [ ] Task 7: Cloud deployment live and verified (Screenshots)
+- [x] Task 0: Architecture diagram and env/ports doc completed
+- [x] Task 1: Multi-stage Dockerfiles and `.dockerignore` files created
+- [x] Task 2: `docker-compose.yml` with isolated networks and volumes authored
+- [x] Task 3: Healthchecks and `depends_on` conditions configured
+- [x] Task 4: Reverse proxy routing and CORS configured
+- [x] Task 5: Persistence and backup plan tested (Screenshot)
+- [x] Task 6: Logging and observability configured (Screenshot)
+- [x] Task 7: Cloud deployment live and verified (Screenshots)
 - [ ] Task 8: CI/CD pipeline built (optional)
-- [ ] Task 9: Reliability tests and runbook completed
+- [x] Task 9: Reliability tests and runbook completed
 - [ ] LinkedIn post published and URL submitted
-- [ ] No sensitive information exposed
+- [x] No sensitive information exposed
 - [ ] VM torn down after grading to avoid unexpected charges
 
 ---

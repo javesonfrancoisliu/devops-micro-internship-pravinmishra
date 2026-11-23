@@ -1,0 +1,7 @@
+.env
+backend/app/
+frontend/site/
+db-init/*.sql
+logs/
+backups/
+!docs/
