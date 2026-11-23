@@ -1,0 +1,126 @@
+---
+- name: Install Node.js, npm and the MySQL client
+  ansible.builtin.apt:
+    name: "{{ backend_packages }}"
+    state: present
+
+- name: Create the application user
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    home: "{{ app_dir }}"
+    create_home: false
+
+- name: Create the application directory
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0755"
+
+- name: Unpack the application code built from Azure Repos
+  ansible.builtin.unarchive:
+    src: "{{ app_archive }}"
+    dest: "{{ app_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+  register: epicbook_source
+  notify: Restart EpicBook
+
+- name: Require TLS with certificate verification for the production database connection
+  ansible.builtin.template:
+    src: config.json.j2
+    dest: "{{ app_dir }}/config/config.json"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0644"
+  notify: Restart EpicBook
+
+- name: Install the production Node.js dependencies
+  ansible.builtin.command: npm install --omit=dev --no-audit --no-fund
+  args:
+    chdir: "{{ app_dir }}"
+  become_user: "{{ app_user }}"
+  environment:
+    HOME: "{{ app_dir }}"
+  register: epicbook_npm
+  changed_when: "'up to date' not in epicbook_npm.stdout"
+
+- name: Create the environment directory
+  ansible.builtin.file:
+    path: "{{ env_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Write the environment file with the database connection
+  ansible.builtin.template:
+    src: epicbook.env.j2
+    dest: "{{ env_dir }}/epicbook.env"
+    owner: root
+    group: "{{ app_user }}"
+    mode: "0640"
+  no_log: true
+  notify: Restart EpicBook
+
+- name: Install the systemd unit
+  ansible.builtin.template:
+    src: epicbook.service.j2
+    dest: /etc/systemd/system/epicbook.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart EpicBook
+
+- name: Apply pending handlers before starting the service
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start EpicBook
+  ansible.builtin.service:
+    name: epicbook
+    state: started
+    enabled: true
+
+- name: Wait for EpicBook to listen on the backend port
+  ansible.builtin.wait_for:
+    port: "{{ app_port }}"
+    host: 127.0.0.1
+    timeout: 120
+
+- name: Count the authors already in MySQL
+  ansible.builtin.command: >
+    mysql {{ mysql_tls_options }} -h {{ db_host }} -P {{ db_port }} -u {{ db_user }} {{ db_name }}
+    -N -B -e "SELECT COUNT(*) FROM Author"
+  environment:
+    MYSQL_PWD: "{{ db_password }}"
+  no_log: true
+  register: epicbook_author_count
+  changed_when: false
+
+- name: Load the author and book seed data once
+  ansible.builtin.shell: >
+    mysql {{ mysql_tls_options }} -h {{ db_host }} -P {{ db_port }} -u {{ db_user }} {{ db_name }}
+    < {{ app_dir }}/db/{{ item }}
+  environment:
+    MYSQL_PWD: "{{ db_password }}"
+  no_log: true
+  loop:
+    - author_seed.sql
+    - books_seed.sql
+  when: epicbook_author_count.stdout | trim | int == 0
+  changed_when: true
+
+- name: Check that the backend serves books from MySQL
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ app_port }}/"
+    return_content: true
+    status_code: 200
+  register: epicbook_backend_page
+  until: "'28 Summers' in epicbook_backend_page.content"
+  retries: 5
+  delay: 3

@@ -1,0 +1,97 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: self-hosted-linux
+
+variables:
+  - group: epicbook-secrets
+  - name: ansibleCoreVersion
+    value: 2.22.0
+  - name: sshSecureFile
+    value: epicbook_ssh_key
+  - name: backendPrivateIp
+    value: 10.40.2.10
+
+stages:
+  - stage: Deploy
+    displayName: Configure servers and deploy EpicBook
+    jobs:
+      - job: Ansible
+        displayName: Ansible deployment
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: DownloadSecureFile@1
+            name: sshKey
+            displayName: Download the SSH private key
+            inputs:
+              secureFile: $(sshSecureFile)
+
+          - script: |
+              set -e
+              chmod 600 "$(sshKey.secureFilePath)"
+              echo "SSH key downloaded to the agent temp folder with mode 600"
+            displayName: Protect the SSH key
+
+          - script: |
+              set -e
+              if ! command -v python3 >/dev/null 2>&1 || ! python3 -c "import venv, ensurepip" >/dev/null 2>&1; then
+                sudo apt-get update -qq
+                sudo apt-get install -y -qq python3 python3-venv python3-pip
+              fi
+              venv_dir="$(Agent.ToolsDirectory)/ansible-venv-$(ansibleCoreVersion)"
+              if [ ! -x "${venv_dir}/bin/ansible-playbook" ]; then
+                python3 -m venv "${venv_dir}"
+                "${venv_dir}/bin/pip" install --quiet "ansible-core==$(ansibleCoreVersion)"
+              fi
+              echo "##vso[task.prependpath]${venv_dir}/bin"
+              "${venv_dir}/bin/ansible-playbook" --version
+            displayName: Install Ansible
+
+          - script: |
+              set -e
+              for value in "${APP_PUBLIC_IP}" "${MYSQL_FQDN}"; do
+                case "${value}" in
+                  ''|\$\(*) echo "Set the pipeline variables APP_PUBLIC_IP and MYSQL_FQDN from the Infra Pipeline outputs first"; exit 1 ;;
+                esac
+              done
+              cd ansible
+              sed "s/__APP_PUBLIC_IP__/${APP_PUBLIC_IP}/; s/__BACKEND_PRIVATE_IP__/$(backendPrivateIp)/" inventory.ini.tpl > inventory.ini
+              sed "s/__MYSQL_FQDN__/${MYSQL_FQDN}/" vars/mysql.yml.tpl > vars/mysql.yml
+              echo "Rendered inventory:"
+              cat inventory.ini
+              echo "Rendered MySQL variables:"
+              cat vars/mysql.yml
+            displayName: Render the inventory and MySQL variables
+            env:
+              APP_PUBLIC_IP: $(APP_PUBLIC_IP)
+              MYSQL_FQDN: $(MYSQL_FQDN)
+
+          - script: |
+              set -e
+              mkdir -p "$(Build.ArtifactStagingDirectory)"
+              tar --exclude=.git --exclude=ansible --exclude=node_modules --exclude=azure-pipelines.yml \
+                -czf "$(Build.ArtifactStagingDirectory)/epicbook.tar.gz" -C "$(Build.SourcesDirectory)" .
+              ls -la "$(Build.ArtifactStagingDirectory)/epicbook.tar.gz"
+            displayName: Package the application code
+
+          - script: ansible-playbook -i inventory.ini site.yml --syntax-check
+            displayName: Ansible syntax check
+            workingDirectory: $(Build.SourcesDirectory)/ansible
+            env:
+              SSH_KEY_FILE: $(sshKey.secureFilePath)
+              DB_PASSWORD: $(MYSQL_ADMIN_PASSWORD)
+              APP_ARCHIVE: $(Build.ArtifactStagingDirectory)/epicbook.tar.gz
+
+          - script: ansible-playbook -i inventory.ini site.yml
+            displayName: Run the EpicBook playbook
+            workingDirectory: $(Build.SourcesDirectory)/ansible
+            env:
+              ANSIBLE_FORCE_COLOR: '0'
+              SSH_KEY_FILE: $(sshKey.secureFilePath)
+              DB_PASSWORD: $(MYSQL_ADMIN_PASSWORD)
+              APP_ARCHIVE: $(Build.ArtifactStagingDirectory)/epicbook.tar.gz

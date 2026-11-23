@@ -1,0 +1,6 @@
+PASS src/tests/other.test.js
+FAIL src/tests/App.test.js
+  ● renders welcome message
+    expect(received).toBeInTheDocument()
+Tests:       1 failed, 1 passed, 2 total
+##[error]Bash exited with code 1

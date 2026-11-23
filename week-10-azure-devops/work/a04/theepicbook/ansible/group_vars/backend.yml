@@ -1,0 +1,25 @@
+---
+ansible_ssh_common_args: >-
+  -o StrictHostKeyChecking=no
+  -o UserKnownHostsFile=/dev/null
+  -o ProxyCommand="ssh -W %h:%p -q -i {{ ansible_ssh_private_key_file }}
+  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+  {{ ansible_user }}@{{ frontend_public_ip }}"
+app_name: epicbook
+app_dir: /opt/epicbook
+app_user: epicbook
+env_dir: /etc/epicbook
+node_env: production
+db_port: 3306
+db_name: bookstore
+db_user: epicbookadmin
+mysql_tls_options: --ssl-mode=VERIFY_IDENTITY --ssl-ca=/etc/ssl/certs/ca-certificates.crt
+db_password: "{{ lookup('env', 'DB_PASSWORD') }}"
+backend_packages:
+  - nodejs
+  - npm
+  - mysql-client
+  - ca-certificates
+  - build-essential
+  - acl
+app_archive: "{{ lookup('env', 'APP_ARCHIVE') }}"

@@ -1,0 +1,4 @@
+Creating an optimized production build...
+Failed to compile.
+SyntaxError: /agent/_work/1/s/src/App.js: Unexpected token (12:4)
+##[error]Bash exited with code 1

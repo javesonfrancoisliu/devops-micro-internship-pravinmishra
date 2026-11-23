@@ -44,6 +44,20 @@ Add your screenshot here.
 
 Build `pipeline-triage.sh`, a read-only Bash script that fetches the latest run's status/log using `az pipelines runs list`/`az pipelines runs show` and/or `gh run list`/`gh run view --log-failed`, and classifies any failure it finds into one of five categories using pattern matching against the log evidence. The script must only ever read run status and logs — it must never trigger, retry, cancel, or approve a run.
 
+### How the script classifies a failure
+
+The script reads the failed steps of the latest run, so it never needs to trigger anything. For each failed step it fetches the log with `az devops invoke` (GET only) and runs five check functions in this order. The first one that matches wins, and its matching lines are quoted as evidence after secrets are redacted.
+
+| Order | Category | Typical evidence |
+|---|---|---|
+| 1 | agent | `No agent found in pool`, or a run stuck in `notStarted` longer than the limit while no agent is online |
+| 2 | authentication | `Permission denied (publickey)`, `AADSTS` errors, `unauthorized`, a service connection that is not authorized |
+| 3 | dependency | `npm ERR! code E404`, `Unable to locate package`, `No matching distribution` |
+| 4 | test | `Tests: 1 failed`, `FAIL src/...`, `AssertionError` |
+| 5 | build | `Failed to compile`, `SyntaxError`, Terraform `Unsupported argument`, Ansible `failed=1` |
+
+Agent and authentication come first because they stop a run before any build or test output exists, and a later category could otherwise match leftover text. `./pipeline-triage.sh --self-test` classifies eight bundled sample logs and audits the script for any command that could start, retry, cancel or approve a run.
+
 ### Evidence
 
 #### Screenshot 3 — `pipeline-triage.sh` showing the check functions and their pattern-matching conditionals
@@ -130,7 +144,7 @@ Add your screenshot here.
 
 Explain, in your own words, why the skill was allowed to gather evidence and diagnose the failure but was never allowed to re-trigger the pipeline or apply the fix itself.
 
-Add your answer here
+The skill is allowed to read because reading cannot change the pipeline, so evidence gathering is safe to repeat and safe to automate. Re-triggering, cancelling or editing the pipeline changes shared state: it can start a deployment, spend agent time, hide the failed run that holds the evidence, or push a wrong fix to servers. A wrong guess by an AI would then become a real change. Keeping the fix with me means a human reads the quoted evidence, decides if the diagnosis is right, and takes responsibility for the change. The restriction is also enforced in two places, not only requested: the skill has no Write or Edit tool and can run only `./pipeline-triage.sh`, and the script itself contains no command that writes to Azure DevOps or GitHub. The result is a fast diagnosis with a human decision before anything changes.
 
 ---
 

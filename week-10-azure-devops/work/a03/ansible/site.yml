@@ -1,0 +1,65 @@
+---
+- name: Prepare the Azure DevOps deployment target
+  hosts: web
+  become: true
+  vars:
+    web_root: /var/www/html
+    deploy_user: ubuntu
+  tasks:
+    - name: Install Nginx and curl
+      ansible.builtin.apt:
+        name:
+          - nginx
+          - curl
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Start and enable Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Give the SSH deployment user ownership of the web root
+      ansible.builtin.file:
+        path: "{{ web_root }}"
+        state: directory
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0755"
+        recurse: true
+
+    - name: Confirm the deployment user has passwordless sudo
+      ansible.builtin.command: sudo -n true
+      become: false
+      changed_when: false
+
+- name: Verify the target as the SSH deployment user
+  hosts: web
+  become: false
+  vars:
+    web_root: /var/www/html
+  tasks:
+    - name: Write a probe file as the deployment user
+      ansible.builtin.copy:
+        content: "probe\n"
+        dest: "{{ web_root }}/.deploy-probe"
+        mode: "0644"
+      changed_when: false
+
+    - name: Remove the probe file
+      ansible.builtin.file:
+        path: "{{ web_root }}/.deploy-probe"
+        state: absent
+      changed_when: false
+
+    - name: Check that Nginx answers on port 80
+      ansible.builtin.uri:
+        url: http://127.0.0.1
+        status_code: 200
+      register: nginx_check
+
+    - name: Show the result
+      ansible.builtin.debug:
+        msg: "Nginx on {{ inventory_hostname }} returned HTTP {{ nginx_check.status }}"
