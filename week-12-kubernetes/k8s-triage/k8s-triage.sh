@@ -94,7 +94,7 @@ check_events() {
     ts=$(echo "$line" | awk '{print $1}')
     epoch=$(to_epoch "$ts")
     if [ -n "$epoch" ] && [ $((now - epoch)) -le $((EVENT_WINDOW_MIN * 60)) ]; then
-      recent+="$(echo "$line" | cut -d' ' -f2-); "
+      recent+="$(echo "$line" | cut -d' ' -f2- | LC_ALL=C tr -d '\000-\037\177'); "
     fi
   done <<< "$rows"
   if [ -n "$recent" ]; then
