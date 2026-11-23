@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -u
 set -o pipefail
+umask 077
 
 full_name="Javeson Francois Liu"
 work_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -43,7 +44,10 @@ USAGE
 
 redact() {
   sed -E \
+    -e 's#(://)[^/@ ]+:[^/@ ]+@#\1[REDACTED]@#g' \
+    -e 's/("(password|passwd|pwd|secret|token|accesstoken|apikey|api_key|client_secret|pat)" *: *")[^"]*/\1[REDACTED]/Ig' \
     -e 's/(password|passwd|pwd|secret|token|apikey|api_key|client_secret|pat)([=:] *)[^ ]+/\1\2[REDACTED]/Ig' \
+    -e 's/[A-Za-z0-9]{70,}/[REDACTED]/g' \
     -e 's/(Authorization:) +((Bearer|Basic) +)?[^ ]+/\1 [REDACTED]/Ig' \
     -e 's/(Bearer|Basic) +[A-Za-z0-9._=+\/-]+/\1 [REDACTED]/Ig' \
     -e 's/[a-z2-7]{52}/[REDACTED]/g' \
