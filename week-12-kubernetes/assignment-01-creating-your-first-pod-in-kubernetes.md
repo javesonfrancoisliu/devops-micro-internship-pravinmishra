@@ -20,7 +20,17 @@ Create the `~/k8s-labs/pods` working directory for all Pod-related files.
 
 #### Screenshot 1 — Terminal showing the `~/k8s-labs/pods` working directory
 
-Add your screenshot here.
+![Screenshot 1: lab directory](screenshots/a1-ss1.png)
+
+Commands run:
+
+```bash
+mkdir -p k8s-labs/pods
+cd k8s-labs/pods
+pwd
+```
+
+Note: the lab folder was created as `k8s-labs/pods` inside a scratch working directory on my Mac (the path in the screenshot), not under `~`, because this lab was run on a local kind cluster named `w12-a`.
 
 ---
 
@@ -34,7 +44,15 @@ Create `nginx-pod` with `kubectl run --image=nginx`, verify it reaches Running, 
 
 #### Screenshot 2 — Terminal showing `nginx-pod` in Running state before deletion
 
-Add your screenshot here.
+![Screenshot 2: nginx-pod Running](screenshots/a1-ss2.png)
+
+```bash
+kubectl run nginx-pod --image=nginx
+kubectl get pods -o wide
+kubectl delete pod nginx-pod
+```
+
+The Pod reached `1/1 Running` on node `w12-a-control-plane`, then I deleted it so the name could be reused by the YAML manifest.
 
 ---
 
@@ -48,7 +66,31 @@ Write `nginx-pod.yaml` (apiVersion `v1`, kind `Pod`, label `app: nginx`, contain
 
 #### Screenshot 3 — `nginx-pod.yaml` and terminal output showing `nginx-pod` in Running state
 
-Add your screenshot here.
+![Screenshot 3: nginx-pod.yaml and Running Pod](screenshots/a1-ss3.png)
+
+`nginx-pod.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+      ports:
+        - containerPort: 80
+```
+
+```bash
+kubectl apply -f nginx-pod.yaml
+kubectl get pods --show-labels
+```
+
+The Pod was created from the manifest and reached `1/1 Running` with the label `app=nginx`.
 
 ---
 
@@ -62,7 +104,16 @@ Run `kubectl describe`, `kubectl logs`, and `kubectl exec -it ... -- /bin/bash` 
 
 #### Screenshot 4 — Terminal showing `kubectl describe`, `kubectl logs`, or the `/usr/share/nginx/html` directory
 
-Add your screenshot here.
+![Screenshot 4: describe, logs and exec](screenshots/a1-ss4.png)
+
+```bash
+kubectl describe pod nginx-pod
+kubectl logs nginx-pod --tail=8
+kubectl exec nginx-pod -c nginx-container -- ls -la /usr/share/nginx/html
+kubectl exec nginx-pod -c nginx-container -- sh -c 'echo "Student: Javeson Francois Liu"; hostname'
+```
+
+`describe` shows the container, image, IP and the Scheduled, Pulling, Pulled, Created, Started events. The `exec` commands were run non-interactively (no TTY in my capture), and they list `index.html` and `50x.html` in `/usr/share/nginx/html`.
 
 ---
 
@@ -75,11 +126,11 @@ Add your screenshot here.
 
 # Completion Checklist
 
-- [ ] Task 1: Lab directory created (Screenshot 1)
-- [ ] Task 2: Pod created imperatively, verified, and deleted (Screenshot 2)
-- [ ] Task 3: Pod created declaratively and verified Running (Screenshot 3)
-- [ ] Task 4: Pod inspected via describe/logs/exec (Screenshot 4)
-- [ ] Understood the difference between imperative and declarative methods
+- [x] Task 1: Lab directory created (Screenshot 1)
+- [x] Task 2: Pod created imperatively, verified, and deleted (Screenshot 2)
+- [x] Task 3: Pod created declaratively and verified Running (Screenshot 3)
+- [x] Task 4: Pod inspected via describe/logs/exec (Screenshot 4)
+- [x] Understood the difference between imperative and declarative methods
 
 ---
 
