@@ -16,6 +16,15 @@ In this capstone assignment, you will design a complete DevOps automation workfl
 
 Prepare `infra-epicbook` (Terraform for network, frontend/backend VMs, MySQL, with `app_public_ip` and `mysql_fqdn` outputs) and `theepicbook` (application code, Ansible roles/playbooks, inventory template, MySQL variable files), keeping infrastructure and application responsibilities separated.
 
+Separation of responsibilities:
+
+| Repository | Owns | Tool | Never contains |
+|---|---|---|---|
+| `infra-epicbook` | Virtual network, three subnets, two network security groups, frontend and backend VMs, MySQL flexible server, private DNS zone, outputs `app_public_ip` and `mysql_fqdn` | Terraform | Application code, Ansible, application secrets |
+| `theepicbook` | EpicBook code, Ansible roles `common`, `backend`, `frontend`, inventory and MySQL variable templates | Ansible | Terraform, the SSH key, the database password |
+
+The two repositories meet only at the two Terraform outputs, which I copy into the pipeline variables `APP_PUBLIC_IP` and `MYSQL_FQDN` of the App Pipeline.
+
 ### Evidence
 
 #### Screenshot 1 — Both repositories showing their required files and separation of responsibilities
@@ -44,6 +53,8 @@ Add your screenshot here.
 
 Create a YAML pipeline for `infra-epicbook` that authenticates via the SPN connection and runs `terraform init`/`plan`/`apply`, producing `app_public_ip` and `mysql_fqdn`.
 
+Design: the pipeline installs Terraform and the Azure CLI on the self-hosted agent when missing, then runs `AzureCLI@2` with the service principal exposed to the shell. Terraform state lives in an Azure Storage container so every run sees the same state. The MySQL admin password comes from the variable group `epicbook-secrets` and reaches Terraform as `TF_VAR_mysql_admin_password`. A run parameter chooses `apply` or `destroy`, so the same pipeline also cleans up the lab. The database sits in a delegated subnet with a private DNS zone and has no public endpoint. The backend VM has no inbound access from the internet: only the frontend subnet can reach it on ports 22 and 8080.
+
 ### Evidence
 
 #### Screenshot 3 — Infra Pipeline run showing `terraform apply` completion and the `app_public_ip` and `mysql_fqdn` outputs
@@ -63,6 +74,8 @@ Add your screenshot here.
 ## Goal
 
 Upload the SSH private key to Azure DevOps Secure Files, create a YAML pipeline for `theepicbook` that installs Ansible, downloads the key, manually incorporates the Infra Pipeline's `app_public_ip`/`mysql_fqdn` outputs into the inventory/variables, and runs the playbook to configure the frontend/backend and deploy EpicBook behind Nginx.
+
+Design: the SSH private key is a Secure File, never in Git. The pipeline installs `ansible-core` in a virtual environment on the agent, renders `inventory.ini` and `vars/mysql.yml` from the two templates using `APP_PUBLIC_IP` and `MYSQL_FQDN`, packages the code from Azure Repos, and runs `site.yml`. Ansible reaches the backend through the frontend as a jump host. The backend role unpacks the code, writes the database connection to a root-owned environment file, runs EpicBook as a systemd service and loads the seed data once. The frontend role proxies Nginx port 80 to the backend private IP. The last play requests the home page from the pipeline agent and asserts it lists books that were read from MySQL.
 
 ### Evidence
 

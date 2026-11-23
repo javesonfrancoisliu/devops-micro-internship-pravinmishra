@@ -58,7 +58,7 @@ Add a screenshot from AWS or Azure showing:
 * VM status as **Running**
 * Public IP address
 
-Add your screenshot here.
+![Screenshot 1: Ubuntu VM running](screenshots/a1-ss1-vm-running.png)
 
 ---
 
@@ -72,7 +72,9 @@ Add an SSH terminal screenshot showing the output of:
 
 The screenshot must confirm a supported Ubuntu version, `x86_64` architecture, and a successful HTTP response from Azure DevOps.
 
-Add your screenshot here.
+![Screenshot 2: Ubuntu, architecture and HTTPS check](screenshots/a1-ss2-ubuntu-arch-https.png)
+
+Note: `curl -I https://dev.azure.com` answers `HTTP/2 404` because the site root has no page; the 404 comes from Azure DevOps itself, so outbound HTTPS works. A second check against `https://login.microsoftonline.com` returned `200`.
 
 ---
 
@@ -93,7 +95,9 @@ Add a terminal screenshot showing:
 * Agent service start
 * `sudo ./svc.sh status` reporting that the service is running
 
-Add your screenshot here.
+![Screenshot 3: Agent configuration and service status](screenshots/a1-ss3-agent-service.png)
+
+Note: condensed from the configuration run on the VM, with the PAT shown as `***`.
 
 > Ensure that the PAT is not visible.
 
@@ -116,7 +120,7 @@ Add a screenshot of the Azure DevOps Agent Pool **Agents** page showing:
 * Agent status as **Online**
 * Agent enabled and available
 
-Add your screenshot here.
+![Screenshot 4: Agent online in Azure DevOps](screenshots/a1-ss4-agent-online.png)
 
 ---
 
@@ -138,7 +142,7 @@ Add a screenshot of `azure-pipelines.yml` open in the Azure Repos editor showing
 * Your Full Name
 * Linux verification commands
 
-Add your screenshot here.
+![Screenshot 5: azure-pipelines.yml in Azure Repos](screenshots/a1-ss5-yaml.png)
 
 ---
 
@@ -156,7 +160,7 @@ Add a screenshot of the successful Azure DevOps pipeline run showing:
 * Output from `df -h`
 * Output from `pwd`
 
-Add your screenshot here.
+![Screenshot 6: Successful test pipeline](screenshots/a1-ss6-pipeline-run.png)
 
 ---
 
@@ -165,7 +169,21 @@ Add your screenshot here.
 Paste the contents of your completed `azure-pipelines.yml` file below.
 
 ```yaml
-# Paste your completed azure-pipelines.yml here
+trigger: none
+
+pool:
+  name: self-hosted-linux
+
+steps:
+  - bash: |
+      echo "Submitted by: Javeson Francois Liu"
+      echo "Agent name: $(Agent.Name)"
+      echo "Machine name: $(Agent.MachineName)"
+      uname -a
+      whoami
+      df -h
+      pwd
+    displayName: 'Verify self-hosted Ubuntu agent'
 ```
 
 > Do not include your PAT, SSH private key, password, or cloud credentials in the YAML file.
@@ -176,13 +194,15 @@ Paste the contents of your completed `azure-pipelines.yml` file below.
 
 Write a short summary of what you configured.
 
-[Write your summary here.]
+I created the Azure DevOps organization `javeson-dmi` with the private project `dmi-week10`, a PAT limited to Agent Pools (Read and manage), and the self-hosted pool `self-hosted-linux`. With Terraform I provisioned an Ubuntu 24.04 `t3.small` EC2 instance in `ap-southeast-5` (SSH limited to my public IP), registered the Azure Pipelines agent `dmi-agent-01` as a systemd service, and confirmed it Online. A YAML pipeline with `trigger: none` and `pool: name: self-hosted-linux` then ran `uname -a`, `whoami`, `df -h` and `pwd` on that VM and succeeded. First run needed a one-time permit for the pipeline to use the pool.
+
+Run notes: the first registration attempt failed with `VS30063: You are not authorized` because the wrong text was passed as the token; I regenerated the PAT and registered again. The Microsoft account that owns the organization is a separate one, so its name is blurred or absent in the evidence.
 
 ---
 
 # LinkedIn Requirement (If Applicable)
 
-## Screenshot 7 — LinkedInisor填Token Belle
+## Screenshot 7 — LinkedIn Post
 
 Add a screenshot of your LinkedIn post showing:
 
@@ -209,22 +229,22 @@ Add your screenshot here.
 
 # Completion Checklist
 
-* Azure DevOps organization and project are ready
-* A supported Ubuntu LTS VM is running and accessible through SSH
-* SSH access is restricted to your public IP address
-* Outbound HTTPS connectivity is working
-* PAT was created with the required scopes and stored securely
-* A self-hosted agent pool was created
-* The same pool name was used during registration and in the pipeline YAML
-* The agent service is running
-* The agent appears **Online** in Azure DevOps
-* The pipeline targets the selected agent pool
-* The pipeline run completed with **Succeeded** status
-* The pipeline output displays your Full Name
-* Screenshots 1–6 are included and readable
-* Screenshot 7 and the LinkedIn post URL are included if applicable
-* The completed `azure-pipelines.yml` content is included
-* No PAT, SSH private key, password, or other secret is visible
+- [x] Azure DevOps organization and project are ready
+- [x] A supported Ubuntu LTS VM is running and accessible through SSH
+- [x] SSH access is restricted to your public IP address
+- [x] Outbound HTTPS connectivity is working
+- [x] PAT was created with the required scopes and stored securely
+- [x] A self-hosted agent pool was created
+- [x] The same pool name was used during registration and in the pipeline YAML
+- [x] The agent service is running
+- [x] The agent appears **Online** in Azure DevOps
+- [x] The pipeline targets the selected agent pool
+- [x] The pipeline run completed with **Succeeded** status
+- [x] The pipeline output displays your Full Name
+- [x] Screenshots 1–6 are included and readable
+- [ ] Screenshot 7 and the LinkedIn post URL are included if applicable (pending: post goes live after publishing)
+- [x] The completed `azure-pipelines.yml` content is included
+- [x] No PAT, SSH private key, password, or other secret is visible
 
 ---
 

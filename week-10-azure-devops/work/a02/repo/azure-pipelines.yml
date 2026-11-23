@@ -1,0 +1,64 @@
+trigger:
+  branches:
+    include:
+      - '*'
+
+pool:
+  name: self-hosted-linux
+
+variables:
+  sshServiceConnection: ubuntu-nginx-ssh
+  deployPath: /var/www/html
+  fullName: Javeson Francois Liu
+
+steps:
+  - checkout: self
+    displayName: Check out the repository
+    clean: true
+
+  - script: |
+      echo "Pipeline  : $(Build.DefinitionName)"
+      echo "Run       : $(Build.BuildNumber)"
+      echo "Branch    : $(Build.SourceBranchName)"
+      echo "Commit    : $(Build.SourceVersion)"
+      echo "Agent     : $(Agent.Name) on $(Agent.MachineName)"
+      echo "Target    : $(deployPath) through service connection $(sshServiceConnection)"
+      echo "Owner     : $(fullName)"
+      echo "Name check in index.html:"
+      grep -n '$(fullName)' index.html
+      ls -la
+    displayName: Pipeline information
+    workingDirectory: $(Build.SourcesDirectory)
+
+  - task: CopyFilesOverSSH@0
+    displayName: Copy the website to the EC2 instance
+    inputs:
+      sshEndpoint: $(sshServiceConnection)
+      sourceFolder: $(Build.SourcesDirectory)
+      contents: |
+        **
+        !.git/**
+        !azure-pipelines.yml
+        !README.md
+      targetFolder: $(deployPath)
+      overwrite: true
+      failOnEmptySource: true
+      readyTimeout: '20000'
+
+  - task: SSH@0
+    displayName: Verify the website on the EC2 instance
+    inputs:
+      sshEndpoint: $(sshServiceConnection)
+      runOptions: inline
+      inline: |
+        set -e
+        echo "Files in $(deployPath):"
+        ls -la $(deployPath)
+        echo "Nginx status:"
+        systemctl is-active nginx
+        curl -fsS -o /tmp/site.html -w 'HTTP status from localhost: %{http_code}\n' http://localhost/
+        test -s /tmp/site.html
+        grep -q '$(fullName)' /tmp/site.html
+        echo "Full name found on the live page: $(fullName)"
+      failOnStdErr: false
+      readyTimeout: '20000'

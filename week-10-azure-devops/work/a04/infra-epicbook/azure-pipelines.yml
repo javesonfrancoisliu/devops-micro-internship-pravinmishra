@@ -1,0 +1,141 @@
+trigger: none
+
+parameters:
+  - name: action
+    displayName: Terraform action
+    type: string
+    default: apply
+    values:
+      - apply
+      - destroy
+
+pool:
+  name: self-hosted-linux
+
+variables:
+  - group: epicbook-secrets
+  - name: azureServiceConnection
+    value: azure-spn-epicbook
+  - name: terraformVersion
+    value: 1.15.6
+  - name: tfstateResourceGroup
+    value: rg-dmi-tfstate
+  - name: tfstateStorageAccount
+    value: stdmitfstatejfl01
+  - name: tfstateContainer
+    value: tfstate
+  - name: tfstateKey
+    value: infra-epicbook.tfstate
+  - name: agentPublicIp
+    value: 43.216.135.239
+
+stages:
+  - stage: Infra
+    displayName: Terraform ${{ parameters.action }}
+    jobs:
+      - job: Terraform
+        displayName: init, plan and ${{ parameters.action }}
+        steps:
+          - checkout: self
+            clean: true
+
+          - script: |
+              set -e
+              tf_dir="$(Agent.ToolsDirectory)/terraform/$(terraformVersion)"
+              if [ ! -x "${tf_dir}/terraform" ]; then
+                mkdir -p "${tf_dir}"
+                curl -fsSL -o "$(Agent.TempDirectory)/terraform.zip" "https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip"
+                unzip -o "$(Agent.TempDirectory)/terraform.zip" -d "${tf_dir}"
+              fi
+              echo "##vso[task.prependpath]${tf_dir}"
+              "${tf_dir}/terraform" version
+            displayName: Install Terraform
+
+          - script: |
+              set -e
+              if ! command -v az >/dev/null 2>&1; then
+                curl -fsSL https://aka.ms/InstallAzureCLIDeb | sudo bash
+              fi
+              az version --query '"azure-cli"' -o tsv
+            displayName: Install Azure CLI when missing
+
+          - task: AzureCLI@2
+            displayName: Terraform init, validate and plan
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              workingDirectory: $(Build.SourcesDirectory)
+              inlineScript: |
+                set -e
+                export ARM_CLIENT_ID="${servicePrincipalId}"
+                export ARM_CLIENT_SECRET="${servicePrincipalKey}"
+                export ARM_TENANT_ID="${tenantId}"
+                export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+                terraform init -input=false \
+                  -backend-config="resource_group_name=$(tfstateResourceGroup)" \
+                  -backend-config="storage_account_name=$(tfstateStorageAccount)" \
+                  -backend-config="container_name=$(tfstateContainer)" \
+                  -backend-config="key=$(tfstateKey)"
+                terraform fmt -check -recursive
+                terraform validate
+                if [ "${{ parameters.action }}" = "destroy" ]; then
+                  terraform plan -destroy -input=false -out=tfplan
+                else
+                  terraform plan -input=false -out=tfplan
+                fi
+            env:
+              TF_VAR_mysql_admin_password: $(MYSQL_ADMIN_PASSWORD)
+              TF_VAR_ssh_public_key: $(SSH_PUBLIC_KEY)
+              TF_VAR_ssh_allowed_cidrs: '["$(agentPublicIp)/32"]'
+
+          - task: AzureCLI@2
+            displayName: Terraform ${{ parameters.action }}
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              workingDirectory: $(Build.SourcesDirectory)
+              inlineScript: |
+                set -e
+                export ARM_CLIENT_ID="${servicePrincipalId}"
+                export ARM_CLIENT_SECRET="${servicePrincipalKey}"
+                export ARM_TENANT_ID="${tenantId}"
+                export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+                terraform apply -input=false -auto-approve tfplan
+            env:
+              TF_VAR_mysql_admin_password: $(MYSQL_ADMIN_PASSWORD)
+              TF_VAR_ssh_public_key: $(SSH_PUBLIC_KEY)
+              TF_VAR_ssh_allowed_cidrs: '["$(agentPublicIp)/32"]'
+
+          - task: AzureCLI@2
+            displayName: Show Terraform outputs
+            condition: and(succeeded(), eq('${{ parameters.action }}', 'apply'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              workingDirectory: $(Build.SourcesDirectory)
+              inlineScript: |
+                set -e
+                export ARM_CLIENT_ID="${servicePrincipalId}"
+                export ARM_CLIENT_SECRET="${servicePrincipalKey}"
+                export ARM_TENANT_ID="${tenantId}"
+                export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+                mkdir -p "$(Build.ArtifactStagingDirectory)"
+                terraform output -json > "$(Build.ArtifactStagingDirectory)/outputs.json"
+                echo "app_public_ip = $(terraform output -raw app_public_ip)"
+                echo "mysql_fqdn    = $(terraform output -raw mysql_fqdn)"
+                echo "backend_private_ip = $(terraform output -raw backend_private_ip)"
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish the output values
+            condition: and(succeeded(), eq('${{ parameters.action }}', 'apply'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)/outputs.json
+              artifact: tf-outputs
+              publishLocation: pipeline

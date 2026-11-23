@@ -1,0 +1,40 @@
+---
+- name: Base setup on every EpicBook server
+  hosts: epicbook
+  become: true
+  roles:
+    - common
+
+- name: Deploy the EpicBook backend and load the MySQL data
+  hosts: backend
+  become: true
+  vars_files:
+    - vars/mysql.yml
+  roles:
+    - backend
+
+- name: Configure the Nginx frontend
+  hosts: frontend
+  become: true
+  roles:
+    - frontend
+
+- name: Verify the whole stack from the pipeline agent
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Request the EpicBook home page through the frontend public IP
+      ansible.builtin.uri:
+        url: "http://{{ hostvars['epicbook-frontend'].ansible_host }}/"
+        return_content: true
+        status_code: 200
+      register: home_page
+
+    - name: Assert that the page shows books loaded from MySQL
+      ansible.builtin.assert:
+        that:
+          - "'The EpicBook!' in home_page.content"
+          - "'28 Summers' in home_page.content"
+        success_msg: "EpicBook answers through Nginx and lists books read from MySQL"
+        fail_msg: "EpicBook did not return the expected page content"

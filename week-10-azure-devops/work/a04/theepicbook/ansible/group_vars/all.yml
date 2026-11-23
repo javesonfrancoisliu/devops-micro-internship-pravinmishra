@@ -1,0 +1,10 @@
+---
+ansible_user: azureuser
+ansible_ssh_private_key_file: "{{ lookup('env', 'SSH_KEY_FILE') }}"
+frontend_public_ip: "{{ hostvars['epicbook-frontend'].ansible_host }}"
+backend_private_ip: "{{ hostvars['epicbook-backend'].ansible_host }}"
+app_port: 8080
+common_packages:
+  - ca-certificates
+  - curl
+  - git

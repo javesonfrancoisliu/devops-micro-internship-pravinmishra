@@ -18,6 +18,13 @@ Confirm that Terraform, Ansible, AWS CLI, SSH, and the self-hosted Azure Pipelin
 
 No submission screenshot is required for this task.
 
+### What I checked
+
+- `terraform version` and `ansible --version` run on my Mac controller.
+- `aws sts get-caller-identity --profile javesonpersonal` answers, so the AWS CLI can reach the account.
+- SSH key `~/.ssh/id_rsa_dmi_azdo` exists and its public half is the key pair Terraform installs on the target.
+- The self-hosted agent `dmi-agent-01` is Online in the pool `self-hosted-linux` (built in Assignment 01).
+
 ---
 
 # Task 1 — Import and Personalize the Azure Static Website Repository
@@ -48,6 +55,13 @@ Provision the AWS EC2 instance using Terraform and configure Nginx, SSH access, 
 
 No additional submission screenshot is required for this task.
 
+### What I built
+
+- Terraform (`terraform/`) creates one `t3.micro` Ubuntu 24.04 EC2 instance in `ap-southeast-5`, an encrypted 8 GB gp3 disk, a key pair and a security group.
+- The security group allows TCP 22 only from my controller IP and from the agent public IP, and TCP 80 from the internet.
+- Ansible (`ansible/site.yml`) installs and starts Nginx, gives the SSH user `ubuntu` ownership of `/var/www/html`, proves it by writing and removing a probe file as that user, and checks that Nginx answers HTTP 200.
+- The pipeline copies files as `ubuntu`, so the write permission on `/var/www/html` is what makes the copy step work without root.
+
 ---
 
 # Task 3 — Create the SSH Service Connection
@@ -68,6 +82,8 @@ Add a screenshot of the saved SSH Service Connection **Overview** page showing:
 Add your screenshot here.
 
 > Do not expose a password, SSH private key, passphrase, or another credential.
+
+Connection settings used: name `ubuntu-nginx-ssh`, host the EC2 public IP, port 22, user `ubuntu`, private key authentication, no passphrase.
 
 ---
 
@@ -152,7 +168,7 @@ Replace the placeholder with your actual website URL:
 
 Write a short summary of the completed CI/CD workflow.
 
-[Write your summary here.]
+I imported the Azure Static Website into Azure Repos and put my full name, Javeson Francois Liu, in the page footer. Terraform created the target EC2 instance with SSH and HTTP rules, and Ansible turned it into a ready Nginx web server where the `ubuntu` user can write to `/var/www/html`. An SSH service connection stores the connection details and the private key inside Azure DevOps, so the YAML never holds a credential. The pipeline triggers on a push to any branch, runs on my self-hosted agent, prints build information, copies the site with `CopyFilesOverSSH@0`, then verifies the live page with `SSH@0`: Nginx is active, the page returns HTTP 200 and it contains my full name. A new commit starts the same run again, so every push updates the website without a manual step.
 
 ---
 

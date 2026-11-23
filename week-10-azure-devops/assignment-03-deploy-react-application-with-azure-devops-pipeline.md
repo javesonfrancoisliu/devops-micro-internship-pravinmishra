@@ -30,6 +30,8 @@ Add your screenshot here.
 
 Provision a new Ubuntu VM with Terraform (ports 22/80 open) and prepare Nginx/`/var/www/html` with Ansible.
 
+Terraform (`terraform/`) creates a separate `t3.micro` Ubuntu 24.04 EC2 instance named `dmi-week10-react` in `ap-southeast-5`. Its security group opens TCP 22 only to my controller IP and the agent public IP, and TCP 80 to the internet. Ansible (`ansible/site.yml`) installs Nginx and gives the SSH user `ubuntu` ownership of `/var/www/html`, which is what lets the pipeline copy the build without root.
+
 ### Evidence
 
 #### Screenshot 2 — Terraform output or cloud console showing the new VM and public IP
@@ -50,6 +52,8 @@ Add your screenshot here.
 
 Point the `ubuntu-nginx-ssh` Service Connection to the new VM and validate it.
 
+The connection keeps the name `ubuntu-nginx-ssh` so the YAML does not change. Only the host changes to the new public IP. Authentication stays private key based and the key is never shown.
+
 ### Evidence
 
 #### Screenshot 4 — SSH Service Connection page showing the new VM connection and successful validation, with the password hidden
@@ -63,6 +67,17 @@ Add your screenshot here.
 ## Goal
 
 Create the Build (npm install/build), Test (`npm test -- --watchAll=false`, blocking on failure), Publish (publish `build/` as `react_build`), and Deploy (copy artifact to `/var/www/html`, restart Nginx via SSH) stages, triggered on `main`.
+
+Pipeline design:
+
+| Stage | What it does | Why |
+|---|---|---|
+| Build | `NodeTool@0` installs Node.js 22, `npm ci`, `npm run build`, keeps `build/` as the temporary artifact `react_build_unverified` | Proves the app compiles |
+| Test | `npm ci`, then `npm test -- --watchAll=false` with `CI=true` | A failing test stops the pipeline before anything is published |
+| Publish | Downloads the unverified build and publishes it as `react_build` | `react_build` exists only for a build that passed its tests |
+| Deploy | Downloads `react_build`, `CopyFilesOverSSH@0` to `/var/www/html` with the target cleaned first, then `SSH@0` runs `sudo systemctl restart nginx` and checks the page | Ships only the tested artifact, only from `main` |
+
+The trigger is a push to `main`. Every stage runs on the self-hosted pool `self-hosted-linux`, and each stage checks out and installs its own dependencies so no stage relies on files left by another.
 
 ### Evidence
 
