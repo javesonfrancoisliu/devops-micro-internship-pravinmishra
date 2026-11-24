@@ -20,7 +20,7 @@ Import `https://github.com/pravinmishraaws/my-react-app` into Azure Repos and co
 
 #### Screenshot 1 — Azure Repos showing the imported React project with `package.json` and `src/` visible
 
-Add your screenshot here.
+![Screenshot 1: Azure Repos with package.json and src/](screenshots/a3-ss1-repo-files.png)
 
 ---
 
@@ -36,13 +36,13 @@ Terraform (`terraform/`) creates a separate `t3.micro` Ubuntu 24.04 EC2 instance
 
 #### Screenshot 2 — Terraform output or cloud console showing the new VM and public IP
 
-Add your screenshot here.
+![Screenshot 2: EC2 instance dmi-week10-react with public IP 43.217.161.30](screenshots/a3-ss2-ec2-instance.png)
 
 ---
 
 #### Screenshot 3 — Terminal showing Ansible completed successfully and Nginx is active
 
-Add your screenshot here.
+![Screenshot 3: Ansible PLAY RECAP with failed=0 and Nginx returning HTTP 200](screenshots/a3-ss3-ansible-recap.png)
 
 ---
 
@@ -58,7 +58,7 @@ The connection keeps the name `ubuntu-nginx-ssh` so the YAML does not change. On
 
 #### Screenshot 4 — SSH Service Connection page showing the new VM connection and successful validation, with the password hidden
 
-Add your screenshot here.
+![Screenshot 4: SSH service connection ubuntu-nginx-ssh pointing to 43.217.161.30, key hidden](screenshots/a3-ss4-ssh-connection.png)
 
 ---
 
@@ -83,7 +83,7 @@ The trigger is a push to `main`. Every stage runs on the self-hosted pool `self-
 
 #### Screenshot 5 — Azure Pipeline YAML definition with the Build, Test, Publish, and Deploy sections visible
 
-Add your screenshot here.
+![Screenshot 5: Pipeline YAML with Build, Test, Publish and Deploy stages](screenshots/a3-ss5-pipeline-yaml.png)
 
 ---
 
@@ -97,19 +97,19 @@ Confirm a commit to `main` triggers the pipeline, all four stages succeed, the b
 
 #### Screenshot 6 — Pipeline run summary showing Build, Test, Publish, and Deploy succeeded
 
-Add your screenshot here.
+![Screenshot 6: Run 20261123.1 with all four stages succeeded](screenshots/a3-ss6-run-summary.png)
 
 ---
 
 #### Screenshot 7 — Terminal or pipeline output showing `/var/www/html` after deployment
 
-Add your screenshot here.
+![Screenshot 7: Deploy log listing /var/www/html](screenshots/a3-ss7-deploy-log.png)
 
 ---
 
 #### Screenshot 8 — Browser showing the running React application with the public IP visible
 
-Add your screenshot here.
+![Screenshot 8: React app live at http://43.217.161.30](screenshots/a3-ss8-react-app.png)
 
 ---
 
@@ -125,13 +125,13 @@ Publish a LinkedIn post about the completed assignment, mentioning the Build/Tes
 
 Paste your LinkedIn post URL here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7530823894077788160-Vlsp/
 
 ---
 
 #### Screenshot — Published LinkedIn post showing the text and at least one link or image
 
-Add your screenshot here.
+![Screenshot 9: Published LinkedIn post describing the four-stage pipeline with a GitHub repository link](screenshots/a3-ss9-linkedin-post.png)
 
 ---
 
@@ -144,13 +144,13 @@ Add your screenshot here.
 
 # Completion Checklist
 
-- [ ] Task 1: React app imported into Azure Repos (Screenshot 1)
-- [ ] Task 2: New VM provisioned and Nginx configured (Screenshots 2–3)
-- [ ] Task 3: SSH Service Connection updated and validated (Screenshot 4)
-- [ ] Task 4: Multi-stage YAML pipeline authored (Screenshot 5)
-- [ ] Task 5: All four stages succeeded and app verified (Screenshots 6–8)
-- [ ] LinkedIn post published and URL submitted
-- [ ] No sensitive data exposed
+- [x] Task 1: React app imported into Azure Repos (Screenshot 1)
+- [x] Task 2: New VM provisioned and Nginx configured (Screenshots 2–3)
+- [x] Task 3: SSH Service Connection updated and validated (Screenshot 4)
+- [x] Task 4: Multi-stage YAML pipeline authored (Screenshot 5)
+- [x] Task 5: All four stages succeeded and app verified (Screenshots 6–8)
+- [x] LinkedIn post published and URL submitted
+- [x] No sensitive data exposed
 
 ---
 

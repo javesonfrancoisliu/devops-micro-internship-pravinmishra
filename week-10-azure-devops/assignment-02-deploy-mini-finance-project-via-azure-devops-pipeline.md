@@ -43,7 +43,7 @@ Add a screenshot of Azure Repos showing:
 * Project files
 * `index.html`
 
-Add your screenshot here.
+![Screenshot 1: Azure Static Website in Azure Repos](screenshots/a2-ss1-repo-files.png)
 
 ---
 
@@ -79,7 +79,7 @@ Add a screenshot of the saved SSH Service Connection **Overview** page showing:
 * Service Connection name
 * SSH connection type
 
-Add your screenshot here.
+![Screenshot 2: SSH service connection Overview](screenshots/a2-ss2-ssh-connection.png)
 
 > Do not expose a password, SSH private key, passphrase, or another credential.
 
@@ -107,7 +107,7 @@ Add a screenshot of `azure-pipelines.yml` open in the Azure Repos editor showing
 * `CopyFilesOverSSH@0` task
 * `SSH@0` verification task
 
-Add your screenshot here.
+![Screenshot 3: azure-pipelines.yml in Azure Repos](screenshots/a2-ss3-pipeline-yaml.png)
 
 > Ensure that no password, SSH private key, PAT, or AWS credential is visible.
 
@@ -131,7 +131,7 @@ Add a screenshot of the successful pipeline run and log summary showing:
 * Remote-verification step completed
 * Your Full Name visible in the pipeline output
 
-Add your screenshot here.
+![Screenshot 4: Successful pipeline run and Pipeline information log](screenshots/a2-ss4-pipeline-run.png)
 
 ---
 
@@ -152,7 +152,7 @@ Add a browser screenshot showing:
 * Your Full Name
 * Updated website content after the automatic deployment
 
-Add your screenshot here.
+![Screenshot 5: Deployed website with the updated footer](screenshots/a2-ss5-website.png)
 
 ## Final Website URL
 
@@ -160,7 +160,7 @@ Add your screenshot here.
 
 Replace the placeholder with your actual website URL:
 
-[Paste your final website URL here]
+http://56.68.115.162
 
 ---
 
@@ -183,11 +183,11 @@ Add a screenshot of your LinkedIn post containing:
 * Three to five lines describing the CI/CD workflow
 * A screenshot of the successful pipeline or deployed website
 
-Add your screenshot here.
+![Screenshot 6: Published LinkedIn post for Week 10 with the deployed website image](screenshots/a2-ss6-linkedin-post.png)
 
 ## LinkedIn Post URL
 
-[Paste your public LinkedIn post URL here]
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7530822428558622720-U54j/
 
 > Do not expose AWS credentials, SSH private keys, passwords, PATs, or other sensitive information.
 
@@ -206,28 +206,28 @@ Add your screenshot here.
 
 # Completion Checklist
 
-* The correct Azure Static Website repository was imported into Azure Repos
-* `index.html` is visible in Azure Repos
-* Your Full Name was added to the website
-* The target EC2 instance was provisioned using Terraform
-* A suitable Ubuntu image and EC2 size were selected
-* Nginx was configured using Ansible
-* SSH login works using the selected authentication method
-* The SSH user can write to `/var/www/html`
-* TCP ports 22 and 80 are configured correctly
-* The self-hosted Azure Pipelines agent is online
-* The SSH Service Connection was created successfully
-* The YAML trigger includes all branches
-* The YAML uses the correct self-hosted agent pool
-* The copy and remote-verification tasks completed successfully
-* The pipeline status is **Succeeded**
-* A new pushed commit triggered the pipeline automatically
-* The Azure Static Website loads through the EC2 public IP address
-* Your Full Name is visible on the deployed website
-* Screenshots 1–5 are included and readable
-* The final website URL is included
-* The LinkedIn post screenshot and URL are included
-* No sensitive information is exposed
+- [x] The correct Azure Static Website repository was imported into Azure Repos
+- [x] `index.html` is visible in Azure Repos
+- [x] Your Full Name was added to the website
+- [x] The target EC2 instance was provisioned using Terraform
+- [x] A suitable Ubuntu image and EC2 size were selected
+- [x] Nginx was configured using Ansible
+- [x] SSH login works using the selected authentication method
+- [x] The SSH user can write to `/var/www/html`
+- [x] TCP ports 22 and 80 are configured correctly
+- [x] The self-hosted Azure Pipelines agent is online
+- [x] The SSH Service Connection was created successfully
+- [x] The YAML trigger includes all branches
+- [x] The YAML uses the correct self-hosted agent pool
+- [x] The copy and remote-verification tasks completed successfully
+- [x] The pipeline status is **Succeeded**
+- [x] A new pushed commit triggered the pipeline automatically
+- [x] The Azure Static Website loads through the EC2 public IP address
+- [x] Your Full Name is visible on the deployed website
+- [x] Screenshots 1–5 are included and readable
+- [x] The final website URL is included
+- [x] The LinkedIn post screenshot and URL are included
+- [x] No sensitive information is exposed
 
 ---
 
