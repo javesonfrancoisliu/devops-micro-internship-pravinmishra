@@ -9,7 +9,7 @@ pool:
 variables:
   - group: epicbook-secrets
   - name: ansibleCoreVersion
-    value: 2.22.0
+    value: 2.20.11
   - name: sshSecureFile
     value: epicbook_ssh_key
   - name: backendPrivateIp

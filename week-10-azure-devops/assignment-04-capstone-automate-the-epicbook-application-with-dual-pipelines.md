@@ -29,7 +29,7 @@ The two repositories meet only at the two Terraform outputs, which I copy into t
 
 #### Screenshot 1 — Both repositories showing their required files and separation of responsibilities
 
-Add your screenshot here.
+![Screenshot 1: Azure Repos with infra-epicbook and theepicbook files](screenshots/a4-ss1-repos.png)
 
 ---
 
@@ -43,7 +43,7 @@ Create and validate an Azure Resource Manager SPN service connection (Tenant ID,
 
 #### Screenshot 2 — Azure Resource Manager service connection showing successful configuration with secrets hidden
 
-Add your screenshot here.
+![Screenshot 2: Service connection azure-spn-epicbook, Azure Resource Manager with service principal, creator blurred](screenshots/a4-ss2-service-connection.png)
 
 ---
 
@@ -59,13 +59,13 @@ Design: the pipeline installs Terraform and the Azure CLI on the self-hosted age
 
 #### Screenshot 3 — Infra Pipeline run showing `terraform apply` completion and the `app_public_ip` and `mysql_fqdn` outputs
 
-Add your screenshot here.
+![Screenshot 3: infra-epicbook apply complete with app_public_ip, mysql_fqdn and backend_private_ip outputs](screenshots/a4-ss3-infra-outputs.png)
 
 ---
 
 #### Screenshot 4 — Azure Portal confirming the provisioned resources
 
-Add your screenshot here.
+![Screenshot 4: Azure Portal resource group rg-epicbook in swedencentral with the provisioned resources](screenshots/a4-ss4-azure-resources.png)
 
 ---
 
@@ -81,13 +81,13 @@ Design: the SSH private key is a Secure File, never in Git. The pipeline install
 
 #### Screenshot 5 — App Pipeline run summary showing successful completion
 
-Add your screenshot here.
+![Screenshot 5: theepicbook run 20261124.9 succeeded on main](screenshots/a4-ss5-app-run-summary.png)
 
 ---
 
 #### Screenshot 6 — Ansible playbook output showing successful configuration with `failed=0`
 
-Add your screenshot here.
+![Screenshot 6: Ansible PLAY RECAP with failed=0 for frontend, backend and localhost](screenshots/a4-ss6-playbook-recap.png)
 
 ---
 
@@ -101,7 +101,9 @@ Confirm both pipelines succeeded, the EpicBook application loads through the fro
 
 #### Screenshot 7 — Browser displaying the running EpicBook application with the frontend public IP visible
 
-Add your screenshot here.
+![Screenshot 7: EpicBook home page at http://51.12.217.234/ listing books from MySQL](screenshots/a4-ss7-epicbook-live.png)
+
+The address strip above the page in Screenshot 7 is drawn onto the image, because a page capture cannot include the real browser address bar. The page itself is a live capture of `http://51.12.217.234/`.
 
 ---
 
@@ -109,7 +111,24 @@ Add your screenshot here.
 
 Record the frontend public application URL and a short issue-and-resolution note, if applicable.
 
-Write your answer here.
+**Frontend URL:** http://51.12.217.234/ (Nginx on the frontend VM, proxying to the Node.js app on the backend VM).
+
+**Architecture:** `infra-epicbook` creates resource group `rg-epicbook` in `swedencentral` with one virtual network (10.40.0.0/16) and three subnets: frontend (10.40.1.0/24), backend (10.40.2.0/24) and database (10.40.3.0/24, delegated to `Microsoft.DBforMySQL/flexibleServers`). The frontend VM (10.40.1.10) has the only public IP and runs Nginx. The backend VM (10.40.2.10) runs the Node.js app on port 8080 under systemd. The database is a MySQL Flexible Server with no public endpoint, reached through a private DNS zone, with `require_secure_transport` ON. Both VMs accept SSH keys only.
+
+**Network security:** the frontend NSG allows SSH only from the build agent and HTTP from the internet. The backend NSG allows ports 22 and 8080 only from the frontend subnet.
+
+**Secrets:** Terraform state is in an Azure Storage container. The MySQL admin password and SSH public key come from the variable group `epicbook-secrets`. The SSH private key is an Azure DevOps Secure File. The service principal secret exists only in the service connection. None are in Git.
+
+**App pipeline:** installs `ansible-core` 2.20.11 in a virtual environment on the self-hosted agent, renders `inventory.ini` and `vars/mysql.yml` from `APP_PUBLIC_IP` and `MYSQL_FQDN`, packages the code and runs `site.yml`. Ansible reaches the backend through the frontend VM as an SSH jump host. systemd (not pm2) keeps the app running. The last play asserts that the home page lists a seeded book, which proves the data came from MySQL.
+
+**Issues and resolutions (run history of `theepicbook`):**
+
+1. `ansible-core` 2.22.0 needs Python 3.13 or newer, and the agent has Python 3.12. Resolution: pinned `ansibleCoreVersion` to 2.20.11 in `azure-pipelines.yml`.
+2. The Terraform output `mysql_fqdn` (`mysql-epicbook-jfl.mysql.database.azure.com`) does not resolve inside the virtual network. The private DNS zone name is `epicbook.mysql.database.azure.com`, so the working host is `mysql-epicbook-jfl.epicbook.mysql.database.azure.com`. Resolution: set the variable `MYSQL_FQDN` to that name. Screenshot 3 still shows the original Terraform output value. Follow-up: align the Terraform output with the zone name.
+3. The backend rejected the connection with MySQL error 3159 (insecure transport). `models/index.js` created Sequelize without the `config` object, so the TLS options were dropped. Resolution: pass `config` as the second argument to `new Sequelize(...)`.
+4. The `mysql` client check failed with "certificate verify failed" under `--ssl-mode=VERIFY_IDENTITY`. Resolution: use `--ssl-mode=VERIFY_CA` with the system CA bundle for the seed-data check. The certificate chain is still verified, but the host name is not. The Node.js app keeps `rejectUnauthorized: true`.
+
+The final run, 20261124.9 (Screenshot 5), succeeded with `failed=0` on every host.
 
 ---
 
@@ -144,14 +163,14 @@ Add your screenshot here.
 
 # Completion Checklist
 
-- [ ] Task 1: `infra-epicbook` and `theepicbook` repositories prepared with clean separation (Screenshot 1)
-- [ ] Task 2: Azure Resource Manager SPN service connection created and validated (Screenshot 2)
-- [ ] Task 3: Infra Pipeline provisioned resources and produced outputs (Screenshots 3–4)
-- [ ] Task 4: App Pipeline configured servers and deployed EpicBook (Screenshots 5–6)
-- [ ] Task 5: End-to-end workflow verified, including MySQL connectivity (Screenshot 7)
-- [ ] Frontend URL and issue notes written (Notes)
+- [x] Task 1: `infra-epicbook` and `theepicbook` repositories prepared with clean separation (Screenshot 1)
+- [x] Task 2: Azure Resource Manager SPN service connection created and validated (Screenshot 2)
+- [x] Task 3: Infra Pipeline provisioned resources and produced outputs (Screenshots 3–4)
+- [x] Task 4: App Pipeline configured servers and deployed EpicBook (Screenshots 5–6)
+- [x] Task 5: End-to-end workflow verified, including MySQL connectivity (Screenshot 7)
+- [x] Frontend URL and issue notes written (Notes)
 - [ ] LinkedIn post published and URL submitted
-- [ ] No secrets exposed
+- [x] No secrets exposed
 
 ---
 
