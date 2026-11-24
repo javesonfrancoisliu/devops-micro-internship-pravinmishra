@@ -183,11 +183,11 @@ Add a screenshot of your LinkedIn post containing:
 * Three to five lines describing the CI/CD workflow
 * A screenshot of the successful pipeline or deployed website
 
-Add your screenshot here.
+![Screenshot 6: Published LinkedIn post for Week 10 with the deployed website image](screenshots/a2-ss6-linkedin-post.png)
 
 ## LinkedIn Post URL
 
-[Paste your public LinkedIn post URL here]
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7530822428558622720-U54j/
 
 > Do not expose AWS credentials, SSH private keys, passwords, PATs, or other sensitive information.
 
@@ -226,7 +226,7 @@ Add your screenshot here.
 - [x] Your Full Name is visible on the deployed website
 - [x] Screenshots 1–5 are included and readable
 - [x] The final website URL is included
-- [ ] The LinkedIn post screenshot and URL are included
+- [x] The LinkedIn post screenshot and URL are included
 - [x] No sensitive information is exposed
 
 ---
