@@ -375,13 +375,13 @@ Publish a 6–10 line LinkedIn post covering the architectural decision that mos
 
 Paste your LinkedIn post URL here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-docker-share-7531361148256956416-zOE3/
 
 ---
 
 #### Screenshot — Published LinkedIn post showing the text body and a deployment verification image
 
-Add your screenshot here.
+![Published LinkedIn post, visibility Anyone, covering the four-service stack, the restore drill and the read-only audit](screenshots/a6-ss5-linkedin-post.png)
 
 ---
 
