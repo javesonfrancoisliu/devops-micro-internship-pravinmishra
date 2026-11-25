@@ -1,4 +1,4 @@
-# Assignment 5 — AI-Assisted CI/CD Pipeline Failure Triage
+# Assignment 5 — AI-Assisted Azure DevOps Dual-Pipeline Failure Triage
 
 Part of the DevOps Micro Internship (DMI) with Agentic AI
 

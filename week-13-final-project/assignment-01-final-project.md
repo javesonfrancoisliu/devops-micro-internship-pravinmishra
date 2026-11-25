@@ -138,7 +138,9 @@ Publish a LinkedIn post summarizing your final project and your journey through 
 
 #### LinkedIn Post URL
 
-Add your LinkedIn post URL here after you publish the post.
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-terraform-share-7531362527478394880-XJId/
+
+![Published LinkedIn post, visibility Anyone, summarizing the capstone stack and the verification discipline](screenshots/a1-ss5-linkedin-post.png)
 
 Add the following credit note at the end of your post:
 
