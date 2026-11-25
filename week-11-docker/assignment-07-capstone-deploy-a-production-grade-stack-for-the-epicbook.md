@@ -339,7 +339,11 @@ Build a pipeline (Azure Pipelines or GitHub Actions) that builds and tags multi-
 
 #### Screenshot (optional) — Completed automated pipeline run
 
-The identical build and smoke-test commands were run locally with Docker and passed: both images built from a fresh `scripts/setup.sh` checkout (`epicbook-backend` 281MB, `epicbook-frontend` 141MB, uncompressed local sizes), the compose stack started with all four services healthy, and `curl -f /health` through the proxy returned HTTP 200 with `{"status":"ok"}`. The deploy job is skipped without the VM secrets because the VM was destroyed. The first GitHub Actions run link will be added after the workflow is on main.
+The identical build and smoke-test commands were run locally with Docker and passed: both images built from a fresh `scripts/setup.sh` checkout (`epicbook-backend` 281MB, `epicbook-frontend` 141MB, uncompressed local sizes), the compose stack started with all four services healthy, and `curl -f /health` through the proxy returned HTTP 200 with `{"status":"ok"}`. The deploy job is skipped without the VM secrets because the VM was destroyed.
+
+GitHub Actions run 1 (push to main) failed at the setup step because the untracked `db-init` folder does not exist in a clean checkout; `setup.sh` was fixed to create it. Run 2 on main passed: setup, both image builds, size print, compose smoke test with `curl -f /health`, and teardown all succeeded, and the deploy job did not run (no deploy requested).
+
+Run link: https://github.com/javesonfrancoisliu/devops-micro-internship-pravinmishra/actions/runs/45660860885
 
 ---
 
@@ -401,7 +405,7 @@ https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-
 - [x] Task 5: Persistence and backup plan tested (Screenshot)
 - [x] Task 6: Logging and observability configured (Screenshot)
 - [x] Task 7: Cloud deployment live and verified (Screenshots)
-- [ ] Task 8: CI/CD pipeline built (optional)
+- [x] Task 8: CI/CD pipeline built (optional)
 - [x] Task 9: Reliability tests and runbook completed
 - [x] LinkedIn post published and URL submitted (Screenshot in the LinkedIn section)
 - [x] No sensitive information exposed
