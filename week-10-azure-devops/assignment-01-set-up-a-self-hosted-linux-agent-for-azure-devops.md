@@ -247,7 +247,7 @@ No separate post was published for this assignment. The Week 10 LinkedIn posts c
 - [x] The pipeline run completed with **Succeeded** status
 - [x] The pipeline output displays your Full Name
 - [x] Screenshots 1–6 are included and readable
-- [ ] Screenshot 7 and the LinkedIn post URL are included if applicable (pending: post goes live after publishing)
+- [x] No separate Screenshot 7 for this assignment; the Week 10 LinkedIn post URLs are included in the LinkedIn section
 - [x] The completed `azure-pipelines.yml` content is included
 - [x] No PAT, SSH private key, password, or other secret is visible
 

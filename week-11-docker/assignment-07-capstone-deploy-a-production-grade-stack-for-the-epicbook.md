@@ -373,8 +373,6 @@ Publish a 6–10 line LinkedIn post covering the architectural decision that mos
 
 #### LinkedIn Post URL
 
-Paste your LinkedIn post URL here:
-
 https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-docker-share-7531361148256956416-zOE3/
 
 ---
@@ -405,7 +403,7 @@ https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-
 - [x] Task 7: Cloud deployment live and verified (Screenshots)
 - [ ] Task 8: CI/CD pipeline built (optional)
 - [x] Task 9: Reliability tests and runbook completed
-- [ ] LinkedIn post published and URL submitted
+- [x] LinkedIn post published and URL submitted (Screenshot in the LinkedIn section)
 - [x] No sensitive information exposed
 - [x] VM torn down after grading to avoid unexpected charges
 

@@ -262,15 +262,15 @@ Create a LinkedIn post covering the assignment objective, networking modes explo
 
 #### LinkedIn Post URL
 
-Paste your LinkedIn post URL here:
+No separate post was published for this assignment. The Week 11 LinkedIn post covers the Docker work and is linked here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-docker-share-7531361148256956416-zOE3/
 
 ---
 
 #### Screenshot — Published LinkedIn post
 
-Add your screenshot here.
+![Published Week 11 LinkedIn post, visibility Anyone](screenshots/a6-ss5-linkedin-post.png)
 
 ---
 
