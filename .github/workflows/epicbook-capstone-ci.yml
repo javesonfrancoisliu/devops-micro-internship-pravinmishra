@@ -1,0 +1,240 @@
+name: epicbook-capstone-ci
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - week-11-docker/epicbook-capstone/**
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy to the VM over SSH after a green build
+        type: boolean
+        default: false
+      rollback_sha:
+        description: Optional 40 character commit sha already present on the VM to roll back to
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: epicbook-capstone-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CAPSTONE_DIR: week-11-docker/epicbook-capstone
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: week-11-docker/epicbook-capstone
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Generate throwaway env file
+        run: |
+          umask 077
+          {
+            echo "HTTP_PORT=80"
+            echo "MYSQL_ROOT_PASSWORD=$(openssl rand -hex 16)"
+            echo "DB_PASSWORD=$(openssl rand -hex 16)"
+            echo "ALLOWED_ORIGINS=http://localhost"
+          } > .env
+
+      - name: Fetch app source and seed data
+        run: ./scripts/setup.sh
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build backend image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./week-11-docker/epicbook-capstone/backend
+          push: false
+          load: true
+          tags: epicbook-backend:${{ github.sha }}
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./week-11-docker/epicbook-capstone/frontend
+          push: false
+          load: true
+          tags: epicbook-frontend:${{ github.sha }}
+
+      - name: Print image sizes
+        run: |
+          docker image ls --filter "reference=epicbook-backend:${IMAGE_TAG}" --filter "reference=epicbook-frontend:${IMAGE_TAG}" --format 'table {{.Repository}}\t{{.Tag}}\t{{.Size}}' | tee image-sizes.txt
+          {
+            echo '### Image sizes'
+            echo '```'
+            cat image-sizes.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write compose override for the sha tags
+        run: |
+          cat > "$RUNNER_TEMP/ci-images.override.yml" <<EOF
+          services:
+            backend:
+              image: epicbook-backend:${IMAGE_TAG}
+            frontend:
+              image: epicbook-frontend:${IMAGE_TAG}
+          EOF
+
+      - name: Smoke test the compose stack
+        run: |
+          compose() {
+            docker compose -p ci-smoke -f docker-compose.yml -f "$RUNNER_TEMP/ci-images.override.yml" "$@"
+          }
+          compose config --quiet
+          compose up -d --no-build --wait --wait-timeout 240
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:80/health; then
+              echo
+              echo "health ok after attempt ${attempt}"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "health check failed" >&2
+          exit 1
+
+      - name: Dump stack state on failure
+        if: failure()
+        run: |
+          docker compose -p ci-smoke -f docker-compose.yml -f "$RUNNER_TEMP/ci-images.override.yml" ps -a || true
+          docker compose -p ci-smoke -f docker-compose.yml -f "$RUNNER_TEMP/ci-images.override.yml" logs --tail 80 || true
+
+      - name: Tear down the smoke stack
+        if: always()
+        run: docker compose -p ci-smoke -f docker-compose.yml -f "$RUNNER_TEMP/ci-images.override.yml" down -v --remove-orphans
+
+      - name: Export images for deploy
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy && inputs.rollback_sha == ''
+        run: |
+          docker save "epicbook-backend:${IMAGE_TAG}" "epicbook-frontend:${IMAGE_TAG}" | gzip > "$RUNNER_TEMP/epicbook-images.tar.gz"
+
+      - name: Upload images artifact
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy && inputs.rollback_sha == ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: epicbook-images
+          path: ${{ runner.temp }}/epicbook-images.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check deploy secrets
+        id: gate
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          ROLLBACK_SHA: ${{ inputs.rollback_sha }}
+        run: |
+          if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || [ -z "$SSH_KEY" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Deploy skipped::SSH_HOST, SSH_USER or SSH_KEY is not set, so no VM is deployed to."
+            exit 0
+          fi
+          if [ -n "$ROLLBACK_SHA" ] && ! printf '%s' "$ROLLBACK_SHA" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "rollback_sha must be a 40 character lowercase hex commit sha" >&2
+            exit 1
+          fi
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        if: steps.gate.outputs.enabled == 'true'
+        uses: actions/checkout@v6
+
+      - name: Download images artifact
+        if: steps.gate.outputs.enabled == 'true' && inputs.rollback_sha == ''
+        uses: actions/download-artifact@v8
+        with:
+          name: epicbook-images
+          path: ${{ runner.temp }}/images
+
+      - name: Deploy over SSH
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          ROLLBACK_SHA: ${{ inputs.rollback_sha }}
+          DEPLOY_DIR: epicbook-capstone
+        run: |
+          umask 077
+          key="$RUNNER_TEMP/deploy_key"
+          known_hosts="$RUNNER_TEMP/known_hosts"
+          printf '%s\n' "$SSH_KEY" > "$key"
+          chmod 600 "$key"
+          ssh-keyscan -T 10 -H "$SSH_HOST" > "$known_hosts" 2>/dev/null
+          [ -s "$known_hosts" ] || { echo "ssh-keyscan returned no host keys" >&2; exit 1; }
+          ssh_opts=(-i "$key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$known_hosts" -o ConnectTimeout=15)
+          target="${SSH_USER}@${SSH_HOST}"
+          tag="${ROLLBACK_SHA:-$IMAGE_TAG}"
+
+          cd "$CAPSTONE_DIR"
+          tar czf - docker-compose.yml proxy/nginx.conf | ssh "${ssh_opts[@]}" "$target" "mkdir -p \"\$HOME/$DEPLOY_DIR\" && tar xzf - -C \"\$HOME/$DEPLOY_DIR\""
+
+          if [ -z "$ROLLBACK_SHA" ]; then
+            gunzip -c "$RUNNER_TEMP/images/epicbook-images.tar.gz" | ssh "${ssh_opts[@]}" "$target" docker load
+          fi
+
+          ssh "${ssh_opts[@]}" "$target" "TAG=$tag DEPLOY_DIR=$DEPLOY_DIR bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$HOME/$DEPLOY_DIR"
+          for img in epicbook-backend epicbook-frontend; do
+            docker image inspect "$img:$TAG" > /dev/null
+          done
+          port="$(grep -E '^HTTP_PORT=' .env | cut -d= -f2 || true)"
+          port="${port:-80}"
+          [ -f .deploy-images.yml ] && cp .deploy-images.yml .deploy-images.prev.yml || true
+          cat > .deploy-images.yml <<OVERRIDE
+          services:
+            backend:
+              image: epicbook-backend:$TAG
+            frontend:
+              image: epicbook-frontend:$TAG
+          OVERRIDE
+          compose() { docker compose -f docker-compose.yml -f "$1" "${@:2}"; }
+          healthy() {
+            for attempt in $(seq 1 20); do
+              curl -fsS "http://127.0.0.1:${port}/health" && { echo; return 0; }
+              sleep 3
+            done
+            return 1
+          }
+          compose .deploy-images.yml pull --ignore-buildable
+          compose .deploy-images.yml up -d --no-build --wait --wait-timeout 180
+          if healthy; then
+            echo "deployed $TAG"
+            exit 0
+          fi
+          echo "health check failed for $TAG" >&2
+          if [ -f .deploy-images.prev.yml ]; then
+            echo "rolling back to the previous tag" >&2
+            compose .deploy-images.prev.yml up -d --no-build --wait --wait-timeout 180
+            cp .deploy-images.prev.yml .deploy-images.yml
+          fi
+          exit 1
+          REMOTE
+
+      - name: Remove deploy key
+        if: always() && steps.gate.outputs.enabled == 'true'
+        run: rm -f "$RUNNER_TEMP/deploy_key" "$RUNNER_TEMP/known_hosts"

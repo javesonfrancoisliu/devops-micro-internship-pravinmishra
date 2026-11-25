@@ -109,7 +109,42 @@ Write a 5–8 line analysis covering the percentage reduction, security benefits
 
 Optionally configure an Nginx health check, cache headers, parameterized ports via environment variables, or a lighter runtime image, and compare results.
 
-> Screenshot optional.
+### Evidence
+
+Screenshots are rendered from real command output (Docker Desktop, run locally). The optimized variant is `react-optimized`; the baseline is the plain multi-stage build rebuilt as `react-multistage-base`.
+
+#### Screenshot 8 - Optimized Dockerfile and nginx.conf template
+
+![Screenshot 8](screenshots/a2-ss8.png)
+
+---
+
+#### Screenshot 9 - Image size comparison, health status and NGINX_PORT check
+
+![Screenshot 9](screenshots/a2-ss9.png)
+
+---
+
+#### Screenshot 10 - Cache headers and /health endpoint (curl)
+
+![Screenshot 10](screenshots/a2-ss10.png)
+
+| Item | Baseline (`react-multistage-base`) | Optimized (`react-optimized`) |
+| --- | --- | --- |
+| Image size | 103MB | 31.7MB |
+| Runtime image | `nginx:alpine` | `nginx:alpine-slim` |
+| Health check | None (`docker inspect`: no healthcheck configured) | `HEALTHCHECK` on `/health`, status `healthy` |
+| Cache headers | None; only `ETag` and `Last-Modified` | `index.html`: `no-cache`; hashed assets: `public, max-age=31536000, immutable` |
+| Port | Fixed at 80 | `NGINX_PORT` env var (8080 default), tested with 8080 and 9090 |
+| `/health` | 404 | 200 `ok` |
+
+### Findings
+
+- Size dropped from 103MB to 31.7MB (69.2% smaller) by switching the runtime to `nginx:alpine-slim`.
+- The container reports `healthy` through `docker inspect` and `docker ps`, so an orchestrator can restart it if `/health` stops returning 200.
+- Hashed files under `/static/` are served with `max-age=31536000, immutable`, while `index.html` is `no-cache`, so browsers keep assets and still pick up new releases.
+- Setting `-e NGINX_PORT=9090` changed the generated `default.conf` to `listen 9090;` and `/health` answered 200 on the mapped port, with no image rebuild.
+- `npm ci` runs in a separate `deps` stage that copies only `package.json` and `package-lock.json`, so the dependency layer is reused when only `src` changes.
 
 ---
 
@@ -150,7 +185,7 @@ https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-
 - [x] Task 3: Multi-stage image built and verified (Screenshots 4–5)
 - [x] Task 4: Image sizes compared (Screenshot 6)
 - [x] Task 5: Analysis written (Screenshot 7 & Notes)
-- [ ] Task 6: Optional production optimizations explored
+- [x] Task 6: Optional production optimizations explored
 - [x] No sensitive information exposed
 
 ---
