@@ -41,6 +41,11 @@ The VM keeps its own git-ignored `.env`, seed SQL and volumes; the pipeline neve
 
 Run the workflow manually with `deploy` true and `rollback_sha` set to an earlier commit sha. The artifact steps are skipped and the VM re-points the stack at `epicbook-backend:<sha>` and `epicbook-frontend:<sha>`, which must still exist on the VM from an earlier deploy (the job fails early if they do not).
 
+## Run history
+
+- Run 1 (push to main) failed at "Fetch app source and seed data": `db-init` is untracked, so `setup.sh` could not copy the seed files. Fix: `mkdir -p db-init` in `setup.sh`.
+- Run 2 (push to main) passed the build job end to end. Run: https://github.com/javesonfrancoisliu/devops-micro-internship-pravinmishra/actions/runs/45660860885
+
 ## Current limits
 
 - The VM from `docs/07-cloud-deployment-notes.md` was destroyed, so the deploy job is skipped because the three secrets are not set. The deploy steps were not run against a real host.
