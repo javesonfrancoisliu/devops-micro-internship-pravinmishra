@@ -333,13 +333,13 @@ Build a pipeline (Azure Pipelines or GitHub Actions) that builds and tags multi-
 
 #### Deliverable — `docs/08-ci-cd-pipeline.md`
 
-[`epicbook-capstone/docs/08-ci-cd-pipeline.md`](epicbook-capstone/docs/08-ci-cd-pipeline.md): optional task, not built. The file records the planned GitHub Actions design.
+[`.github/workflows/epicbook-capstone-ci.yml`](../.github/workflows/epicbook-capstone-ci.yml) is the GitHub Actions workflow (build, tag with the commit sha, compose smoke test, gated SSH deploy). [`epicbook-capstone/docs/08-ci-cd-pipeline.md`](epicbook-capstone/docs/08-ci-cd-pipeline.md) describes it.
 
 ---
 
 #### Screenshot (optional) — Completed automated pipeline run
 
-Not applicable, the optional pipeline was not built.
+The identical build and smoke-test commands were run locally with Docker and passed: both images built from a fresh `scripts/setup.sh` checkout (`epicbook-backend` 281MB, `epicbook-frontend` 141MB, uncompressed local sizes), the compose stack started with all four services healthy, and `curl -f /health` through the proxy returned HTTP 200 with `{"status":"ok"}`. The deploy job is skipped without the VM secrets because the VM was destroyed. The first GitHub Actions run link will be added after the workflow is on main.
 
 ---
 
