@@ -450,6 +450,10 @@ Compare this incident to the Nginx incident from Week 3's AI-Assisted Linux Heal
 
 **Limits.** This is a small local kind cluster with one node. Claude ran headlessly, so it ran the checks in one pass without interactive approval prompts, restricted by the skill's `allowed-tools`. The check 4 event window (15 minutes) means a WARN can linger after a fix, which is why the final run happened after the window passed.
 
+**LinkedIn post:** https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-kubernetes-share-7531361866757947392-iT1M/
+
+![Published LinkedIn post, visibility Anyone, covering the three-tier Book Review app, the incident triage and the read-only k8s-triage skill](screenshots/a11-ss14-linkedin-post.png)
+
 ---
 
 # Submission Instructions
