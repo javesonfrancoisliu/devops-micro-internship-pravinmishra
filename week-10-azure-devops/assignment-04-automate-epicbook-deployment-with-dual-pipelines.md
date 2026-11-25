@@ -1,4 +1,4 @@
-# Assignment 4 — Capstone: Automate the EpicBook Application with Dual Pipelines
+# Assignment 4 — Automate EpicBook Deployment with Dual Pipelines
 
 Part of the DevOps Micro Internship (DMI) with Agentic AI
 
@@ -141,8 +141,6 @@ Publish a LinkedIn post about the completed capstone project, mentioning the two
 ## Evidence
 
 #### LinkedIn Post URL
-
-Paste your LinkedIn post URL here:
 
 https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7531358347317366784-ZP2p/
 

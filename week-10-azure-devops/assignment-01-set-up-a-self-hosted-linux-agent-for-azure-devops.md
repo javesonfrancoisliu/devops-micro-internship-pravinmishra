@@ -211,9 +211,14 @@ Add a screenshot of your LinkedIn post showing:
 * Three to five lines explaining your experience
 * A screenshot of the successful pipeline run with no secrets visible
 
-Add your screenshot here.
+No separate post was published for this assignment. The Week 10 LinkedIn posts cover the same self-hosted agent and pipelines, and their screenshots are in Assignment 2 (Screenshot 6), Assignment 3 (Screenshot 9), Assignment 4 (Screenshot 8) and Assignment 5 (Screenshot 11).
 
-**LinkedIn Post URL:** [Paste your LinkedIn post URL here]
+**LinkedIn Post URL (Week 10 posts):**
+
+* Assignment 2: https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7530822428558622720-U54j/
+* Assignment 3: https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7530823894077788160-Vlsp/
+* Assignment 4: https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7531358347317366784-ZP2p/
+* Assignment 5: https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7531359142620413952-rZCY/
 
 ---
 

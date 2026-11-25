@@ -1,4 +1,4 @@
-# Assignment 3 — Deploy React Application with Azure DevOps Pipeline
+# Assignment 3 — Automate React App Deployment Using Azure DevOps CI/CD
 
 Part of the DevOps Micro Internship (DMI) with Agentic AI
 
@@ -122,8 +122,6 @@ Publish a LinkedIn post about the completed assignment, mentioning the Build/Tes
 ## Evidence
 
 #### LinkedIn Post URL
-
-Paste your LinkedIn post URL here:
 
 https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7530823894077788160-Vlsp/
 
