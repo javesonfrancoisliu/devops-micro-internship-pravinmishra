@@ -144,13 +144,13 @@ Publish a LinkedIn post about the completed capstone project, mentioning the two
 
 Paste your LinkedIn post URL here:
 
-`Add your URL here`
+https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7531358347317366784-ZP2p/
 
 ---
 
 #### Screenshot — Published LinkedIn post showing the text and at least one link or image
 
-Add your screenshot here.
+![Screenshot 8: Published LinkedIn post, visibility Anyone, covering the two-repository and dual-pipeline model, Terraform and Ansible roles, and the MySQL verification](screenshots/a4-ss8-linkedin-post.png)
 
 ---
 
@@ -169,7 +169,7 @@ Add your screenshot here.
 - [x] Task 4: App Pipeline configured servers and deployed EpicBook (Screenshots 5–6)
 - [x] Task 5: End-to-end workflow verified, including MySQL connectivity (Screenshot 7)
 - [x] Frontend URL and issue notes written (Notes)
-- [ ] LinkedIn post published and URL submitted
+- [x] LinkedIn post published and URL submitted (Screenshot 8)
 - [x] No secrets exposed
 
 ---
