@@ -152,6 +152,10 @@ The skill is allowed to read because reading cannot change the pipeline, so evid
 
 **Script bugs found while testing against live data and fixed:** the run query used `--top 1` (now `--top 25`), the run row was split on tabs although `az` printed one value per line, and the log download failed because `az` refuses an existing output file. The self-test and its read-only audit pass.
 
+**LinkedIn post:** https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7531359142620413952-rZCY/
+
+![Screenshot 11: Published LinkedIn post, visibility Anyone, covering the read-only triage script, the /pipeline-triage skill, the fault-injection drill and the three script bugs](screenshots/a5-ss11-linkedin-post.png)
+
 ---
 
 # Submission Instructions
