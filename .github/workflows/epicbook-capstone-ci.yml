@@ -145,11 +145,12 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
           ROLLBACK_SHA: ${{ inputs.rollback_sha }}
         run: |
-          if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || [ -z "$SSH_KEY" ]; then
+          if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || [ -z "$SSH_KEY" ] || [ -z "$SSH_KNOWN_HOSTS" ]; then
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Deploy skipped::SSH_HOST, SSH_USER or SSH_KEY is not set, so no VM is deployed to."
+            echo "::notice title=Deploy skipped::SSH_HOST, SSH_USER, SSH_KEY or SSH_KNOWN_HOSTS is not set, so no VM is deployed to."
             exit 0
           fi
           if [ -n "$ROLLBACK_SHA" ] && ! printf '%s' "$ROLLBACK_SHA" | grep -Eq '^[0-9a-f]{40}$'; then
@@ -175,6 +176,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
           ROLLBACK_SHA: ${{ inputs.rollback_sha }}
           DEPLOY_DIR: epicbook-capstone
         run: |
@@ -183,8 +185,8 @@ jobs:
           known_hosts="$RUNNER_TEMP/known_hosts"
           printf '%s\n' "$SSH_KEY" > "$key"
           chmod 600 "$key"
-          ssh-keyscan -T 10 -H "$SSH_HOST" > "$known_hosts" 2>/dev/null
-          [ -s "$known_hosts" ] || { echo "ssh-keyscan returned no host keys" >&2; exit 1; }
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$known_hosts"
+          [ -s "$known_hosts" ] || { echo "SSH_KNOWN_HOSTS is empty" >&2; exit 1; }
           ssh_opts=(-i "$key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$known_hosts" -o ConnectTimeout=15)
           target="${SSH_USER}@${SSH_HOST}"
           tag="${ROLLBACK_SHA:-$IMAGE_TAG}"

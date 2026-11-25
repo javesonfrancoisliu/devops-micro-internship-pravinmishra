@@ -28,8 +28,8 @@ Permissions are `contents: read`. Only `actions/*` and `docker/*` actions are us
 
 Runs only for `workflow_dispatch` with `deploy` true, after the build job passes.
 
-1. Gate step: reads `SSH_HOST`, `SSH_USER`, `SSH_KEY` into environment variables. If any is empty it prints a notice and every later step is skipped, so the job ends green (skipped cleanly), not failed.
-2. Writes the key to a `600` file, runs `ssh-keyscan` for the host, and uses plain `ssh` with `StrictHostKeyChecking=yes` against that file.
+1. Gate step: reads `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_KNOWN_HOSTS` into environment variables. If any is empty it prints a notice and every later step is skipped, so the job ends green (skipped cleanly), not failed.
+2. Writes the key to a `600` file, writes the pinned host key from `SSH_KNOWN_HOSTS` to a file, and uses plain `ssh` with `StrictHostKeyChecking=yes` against that file.
 3. Sends `docker-compose.yml` and `proxy/nginx.conf` to `~/epicbook-capstone` on the VM, then streams the built images with `docker load` (no registry is used, so the images deployed are exactly the ones that passed the smoke test).
 4. On the VM: writes `.deploy-images.yml` pinning the sha tags, `docker compose pull --ignore-buildable` (nginx and mysql), `docker compose up -d --no-build --wait`, then `curl -f /health` with retries.
 5. If the health check fails and a previous override exists, the VM is brought back to the previous tag and the job fails.
@@ -48,8 +48,8 @@ Run the workflow manually with `deploy` true and `rollback_sha` set to an earlie
 
 ## Current limits
 
-- The VM from `docs/07-cloud-deployment-notes.md` was destroyed, so the deploy job is skipped because the three secrets are not set. The deploy steps were not run against a real host.
-- `ssh-keyscan` trusts the host key on first contact. Pin the key in a secret for stricter verification.
+- The VM from `docs/07-cloud-deployment-notes.md` was destroyed, so the deploy job is skipped because the four secrets are not set. The deploy steps were not run against a real host.
+- The host key is pinned in the `SSH_KNOWN_HOSTS` secret. Capture it once from a trusted network with `ssh-keyscan -H <host>` and verify the fingerprint.
 - The workflow uses the upstream repository `pravinmishraaws/theepicbook` at its default branch through `setup.sh`, so an upstream change can break the build.
 - No TLS, no registry push, and no image scanning.
 
