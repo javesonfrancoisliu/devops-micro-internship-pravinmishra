@@ -1,0 +1,5 @@
+Starting: Run npm test
+Tests:       2 passed, 2 total
+Starting: Copy the website
+Copied 1 file
+Finishing: deploy
