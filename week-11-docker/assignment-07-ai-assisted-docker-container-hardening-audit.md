@@ -161,15 +161,15 @@ Your submission must include:
 
 # Completion Checklist
 
-- [ ] Task 1: EpicBook container confirmed running (Screenshot 1)
-- [ ] Task 2: `CLAUDE.md` created with hardening workflow and safety rules (Screenshot 2)
-- [ ] Task 3: Claude produced a read-only six-check audit plan (Screenshot 3)
-- [ ] Task 4: Audit script built and validated (Screenshots 4–5)
-- [ ] Task 5: Script run against the live container, results recorded honestly (Screenshot 6)
-- [ ] Task 6: `/docker-audit` skill created and run (Screenshots 7–8)
-- [ ] Task 7: Dockerfile fixed, image rebuilt, and fix verified (Screenshots 9–11)
-- [ ] Reflection answered (Notes)
-- [ ] No sensitive data exposed
+- [x] Task 1: EpicBook container confirmed running (Screenshot 1)
+- [x] Task 2: `CLAUDE.md` created with hardening workflow and safety rules (Screenshot 2)
+- [x] Task 3: Claude produced a read-only six-check audit plan (Screenshot 3)
+- [x] Task 4: Audit script built and validated (Screenshots 4–5)
+- [x] Task 5: Script run against the live container, results recorded honestly (Screenshot 6)
+- [x] Task 6: `/docker-audit` skill created and run (Screenshots 7–8)
+- [x] Task 7: Dockerfile fixed, image rebuilt, and fix verified (Screenshots 9–11)
+- [x] Reflection answered (Notes)
+- [x] No sensitive data exposed
 
 ---
 

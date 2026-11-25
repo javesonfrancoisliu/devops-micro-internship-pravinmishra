@@ -1,0 +1,5 @@
+2026-11-23T02:10:01Z Starting: Install dependencies
+npm ERR! code E404
+npm ERR! 404 Not Found - GET https://registry.npmjs.org/reakt - Not found
+npm ERR! 404  reakt@^19.0.0 is not in this registry.
+##[error]Bash exited with code 1

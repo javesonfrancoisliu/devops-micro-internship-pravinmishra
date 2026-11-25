@@ -48,7 +48,7 @@ How to read it:
 - The proxy sends `/assets/` to the frontend (nginx-unprivileged, user 101, port 8080) and `/` and `/api/` to the backend (Node 18 alpine, port 8080, non-root, read-only filesystem).
 - The backend is the only service on both networks. It talks to MySQL 8.0 on the `back-tier` network, which is `internal: true`, so the database has no route to or from the outside. Data lives in the named volume `db-data`.
 - Startup order is enforced with healthchecks: db, then backend and frontend, then proxy.
-- Delivery path: Terraform provisions the AWS VM (Week 8), Ansible configures servers with roles (Week 9), a self-hosted Azure DevOps agent is the CI/CD runner (Week 10, in progress), Docker packages and runs the app (Week 11), and Kubernetes on a local kind cluster is the Week 12 work in progress.
+- Delivery path: Terraform provisions the AWS VM (Week 8), Ansible configures servers with roles (Week 9), Azure DevOps pipelines on a self-hosted agent are the CI/CD runner (Week 10: infra pipeline for Terraform, app pipeline for Ansible), Docker packages and runs the app (Week 11), and Kubernetes on a local kind cluster runs the Book Review app and the incident triage (Week 12).
 
 ---
 
@@ -64,8 +64,8 @@ List the technologies used in each layer of your project.
 |-------|----------------|
 | Cloud | AWS EC2 (Ubuntu 24.04, t3.micro for the Week 11 stack, gp3 encrypted disk, IMDSv2 required, security group with SSH from my IP only and HTTP 80 open) in `ap-southeast-5`; Amazon RDS for MySQL and VPC networking in the Week 8 and Week 9 EpicBook labs |
 | IaC | Terraform with reusable modules (network, ec2, rds) for the EpicBook VPC, EC2 and private RDS in Week 8, plus a standalone Terraform stack for the Week 11 VM and the Week 10 agent VM; Terraform plan and drift review with Claude Code, with apply kept human-only |
-| CI/CD | Azure DevOps with a self-hosted Linux agent (`dmi-agent-01`, pool `self-hosted-linux`) running a YAML pipeline, built in Week 10 Assignment 1 (the rest of Week 10 is in progress). A GitHub Actions design for the Docker stack is documented but not built |
-| Containers | Docker and Docker Compose: multi-stage Dockerfiles (backend 1.79 GB naive image down to 281 MB), nginx reverse proxy, nginx-unprivileged frontend, MySQL 8.0, networks `front-tier` and internal `back-tier`, named volume `db-data`, healthchecks, `json-file` log rotation. Kubernetes on local kind is in progress (Week 12) and not claimed as done |
+| CI/CD | Azure DevOps with a self-hosted Linux agent (`dmi-agent-01`, pool `self-hosted-linux`) running YAML pipelines (Week 10 Assignments 1 to 5): a Mini Finance deploy, a React deploy, the EpicBook dual pipelines (`infra-epicbook` with Terraform, `theepicbook` with Ansible) and a read-only AI failure triage with a deliberate break and fix. A GitHub Actions design for the Docker stack is documented but not built |
+| Containers | Docker and Docker Compose: multi-stage Dockerfiles (backend 1.79 GB naive image down to 281 MB), nginx reverse proxy, nginx-unprivileged frontend, MySQL 8.0, networks `front-tier` and internal `back-tier`, named volume `db-data`, healthchecks, `json-file` log rotation. Kubernetes on a local kind cluster (Week 12): pods, ReplicaSets, Deployments with rolling updates, autoscaling, readiness and liveness probes, ClusterIP, NodePort and LoadBalancer Services, the Book Review app and an AI-assisted incident triage |
 | Config Mgmt | Ansible: inventory, `ansible.cfg`, multi-play playbooks, roles `common`, `nginx` and `epicbook`, group variables, Ansible Vault for the database password, handlers and idempotent re-runs (Week 9) |
 
 ---
@@ -88,7 +88,7 @@ I wrote Terraform with separate `network`, `ec2` and `rds` modules wired togethe
 
 #### Step 2 — Self-hosted Azure DevOps agent as the CI/CD runner
 
-With Terraform I provisioned an Ubuntu 24.04 `t3.small` EC2 VM (encrypted gp3 disk, IMDSv2 required, SSH limited to my IP, Docker installed by cloud-init). I registered the Azure Pipelines agent `dmi-agent-01` in the pool `self-hosted-linux` as a systemd service using a PAT limited to Agent Pools, and confirmed it Online. A YAML pipeline with `trigger: none` and `pool: name: self-hosted-linux` ran `uname -a`, `whoami`, `df -h` and `pwd` on that VM and succeeded. This is the only part of Week 10 I am claiming; the remaining Week 10 pipelines are in progress.
+With Terraform I provisioned an Ubuntu 24.04 `t3.small` EC2 VM (encrypted gp3 disk, IMDSv2 required, SSH limited to my IP, Docker installed by cloud-init). I registered the Azure Pipelines agent `dmi-agent-01` in the pool `self-hosted-linux` as a systemd service using a PAT limited to Agent Pools, and confirmed it Online. A YAML pipeline with `trigger: none` and `pool: name: self-hosted-linux` ran `uname -a`, `whoami`, `df -h` and `pwd` on that VM and succeeded. The later Week 10 assignments reuse this agent: the EpicBook capstone ran an infra pipeline (Terraform: network, VMs, MySQL) and an app pipeline (Ansible: Nginx frontend, Node.js backend), and Assignment 5 added a read-only triage script and skill that classified a deliberate typo failure as a dependency problem before the fix turned the run green.
 
 #### Screenshot 3 — Step 2
 
@@ -124,7 +124,7 @@ Reflect on what was hard, how you solved it, and your biggest takeaways from the
 - Build in layers and isolate them: an internal back-tier network, a non-root read-only backend with dropped capabilities, and a private database mean a compromised front layer still cannot reach the data.
 - Everything should be repeatable and checkable: Terraform for infrastructure, Ansible for configuration (idempotent, secrets in Vault), healthchecks and `depends_on` for startup order, and a tested backup and restore drill rather than a backup plan on paper.
 - AI helps most with evidence and a human gate: Claude Code reviewed plans and drift, but hooks blocked `terraform apply` and `destroy`, so I decided and applied every change myself, and I did not accept every recommendation.
-- Only claim what you verified: some parts are still in progress (Week 10 pipelines beyond the agent, Week 12 Kubernetes on kind, the optional CI/CD pipeline for the stack), and the live VM was torn down to avoid cost.
+- Only claim what you verified: the optional CI/CD pipeline for the Docker stack was not built, screenshots of terminal views are labelled when they are rendered images, and the cloud resources (AWS VMs, Azure resource groups, service principal) were destroyed after grading to avoid cost.
 
 ---
 

@@ -407,7 +407,7 @@ Add your screenshot here.
 - [x] Task 9: Reliability tests and runbook completed
 - [ ] LinkedIn post published and URL submitted
 - [x] No sensitive information exposed
-- [ ] VM torn down after grading to avoid unexpected charges
+- [x] VM torn down after grading to avoid unexpected charges
 
 ---
 
