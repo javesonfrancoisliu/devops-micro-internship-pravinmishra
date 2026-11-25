@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 git -C backend/app apply --check ../../patches/0001-health-cors-json-logs.patch 2>/dev/null \
   && git -C backend/app apply ../../patches/0001-health-cors-json-logs.patch
 
-mkdir -p frontend/site logs/proxy backups
+mkdir -p frontend/site logs/proxy backups db-init
 cp -R backend/app/public/. frontend/site/
 
 cp backend/app/db/BuyTheBook_Schema.sql db-init/01-schema.sql
