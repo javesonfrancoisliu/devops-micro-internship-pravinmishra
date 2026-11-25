@@ -1,4 +1,4 @@
-# Assignment 7 — AI-Assisted Docker Container Hardening Audit
+# Assignment 8 — AI-Assisted Docker Container Hardening Audit
 
 Part of the DevOps Micro Internship (DMI) with Agentic AI
 

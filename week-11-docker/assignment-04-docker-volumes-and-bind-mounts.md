@@ -1,4 +1,4 @@
-# Assignment 4 — Docker Volumes
+# Assignment 4 — Docker Volumes and Bind Mounts
 
 Part of the DevOps Micro Internship (DMI) with Agentic AI
 

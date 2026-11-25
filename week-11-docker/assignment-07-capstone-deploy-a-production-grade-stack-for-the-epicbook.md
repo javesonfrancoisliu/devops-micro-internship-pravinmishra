@@ -1,4 +1,4 @@
-# Assignment 6 — Capstone: Deploy a Production-Grade Stack for The EpicBook
+# Assignment 7 — Capstone: Deploy a Production-Grade Stack for The EpicBook
 
 Part of the DevOps Micro Internship (DMI) with Agentic AI
 
@@ -223,7 +223,7 @@ volumes:
   db-data:
 ```
 
-The frontend Dockerfile shown is the final version after the Assignment 7 audit (non-root, port 8080); the live VM run for the screenshots was the earlier nginx:1.27-alpine frontend on port 80.
+The frontend Dockerfile shown is the final version after the Assignment 8 audit (non-root, port 8080); the live VM run for the screenshots was the earlier nginx:1.27-alpine frontend on port 80.
 
 Networks: `front-tier` (proxy, frontend, backend) and `back-tier` (`internal: true`, backend and db). Volume: `db-data`.
 
