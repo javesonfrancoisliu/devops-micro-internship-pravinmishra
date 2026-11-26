@@ -356,11 +356,13 @@ Create a LinkedIn post about the Book Review App deployment and what you learned
 
 ### Evidence
 
-**LinkedIn Post URL:** Not yet published. To be added after the post is live.
+**LinkedIn Post URL:** https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-docker-share-7531544819219750912-_KQH/
 
 #### LinkedIn Post Screenshot
 
-Not yet available. To be added after the post is live.
+![LinkedIn post: Week 11 Stateful Three-Tier Orchestration with Docker Compose, posted by Javeson Francois Liu](screenshots/a6-compose-ss18-linkedin-post.png)
+
+The screenshot shows the author name and the opening of the post (health-gated startup, secrets isolation, persistence drill). The full text continues below the fold on LinkedIn.
 
 ---
 
@@ -383,7 +385,7 @@ Not yet available. To be added after the post is live.
 - [x] Teardown explanation completed
 - [x] Public frontend URL included
 - [x] GitHub repository URL included
-- [ ] LinkedIn post URL and screenshot included
+- [x] LinkedIn post URL and screenshot included
 - [x] Full name visible in required terminal screenshots
 - [x] Browser screenshots include a full-name caption
 - [x] No sensitive information exposed
