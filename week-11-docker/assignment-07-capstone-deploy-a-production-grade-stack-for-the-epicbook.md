@@ -333,7 +333,7 @@ Build a pipeline (Azure Pipelines or GitHub Actions) that builds and tags multi-
 
 #### Deliverable — `docs/08-ci-cd-pipeline.md`
 
-[`.github/workflows/epicbook-capstone-ci.yml`](../.github/workflows/epicbook-capstone-ci.yml) is the GitHub Actions workflow (build, tag with the commit sha, compose smoke test, gated SSH deploy). [`epicbook-capstone/docs/08-ci-cd-pipeline.md`](epicbook-capstone/docs/08-ci-cd-pipeline.md) describes it.
+[`.github/workflows/epicbook-capstone-ci.yml`](https://github.com/javesonfrancoisliu/devops-micro-internship-pravinmishra/blob/main/.github/workflows/epicbook-capstone-ci.yml) is the GitHub Actions workflow (build, tag with the commit sha, compose smoke test, gated SSH deploy). [`epicbook-capstone/docs/08-ci-cd-pipeline.md`](epicbook-capstone/docs/08-ci-cd-pipeline.md) describes it.
 
 ---
 

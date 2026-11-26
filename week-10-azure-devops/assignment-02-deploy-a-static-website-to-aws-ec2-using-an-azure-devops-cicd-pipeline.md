@@ -154,13 +154,17 @@ Add a browser screenshot showing:
 
 ![Screenshot 5: Deployed website with the updated footer](screenshots/a2-ss5-website.png)
 
+#### Automatic trigger on a new commit
+
+A second pushed commit started another pipeline run without a manual trigger:
+
+![Second pipeline run triggered automatically by a new commit](screenshots/a2-extra-second-run.png)
+
 ## Final Website URL
 
-`http://<target-vm-public-ip>`
-
-Replace the placeholder with your actual website URL:
-
 http://56.68.115.162
+
+The EC2 instance was destroyed after grading evidence was captured, so the URL no longer responds. Screenshots 5 and 6 and the second-run screenshot show the deployment.
 
 ---
 

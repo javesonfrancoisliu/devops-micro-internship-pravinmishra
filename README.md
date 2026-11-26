@@ -2,11 +2,11 @@
 
 ![Cohort](https://img.shields.io/badge/Cohort-3-blue?style=for-the-badge)
 ![Program](https://img.shields.io/badge/DevOps_Micro_Internship-Pravin_Mishra-orange?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-In_Progress-yellow?style=for-the-badge)
-![Weeks](https://img.shields.io/badge/Weeks_Completed-9%2F14-green?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=for-the-badge)
+![Weeks](https://img.shields.io/badge/Weeks_Completed-14%2F14-green?style=for-the-badge)
 
 > 👋 **New here?** Read the [submission instructions](./onboarding) first — how to fork, fill in, and submit your assignments.
-> Find all the required links & assignment guidelines from here [Required links](./dmi_cohort3_resources.md)
+> Find all the required links & assignment guidelines from here [Required links](./dmi_resources.md)
 
 ---
 
@@ -141,7 +141,7 @@ This is not a course. It is an internship-style program — real deployments, re
 | 08 | Terraform | ✅ Completed | ✅ Solved | [A04](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-terraform-ugcPost-7529447755602268160-oFgf) · [A05](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-terraform-agenticai-ugcPost-7529761375083053056-Ejfz/) · [A06](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-terraform-agenticai-ugcPost-7529761661025484800-SNqw/) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w8-terraform) |
 | 09 | Ansible | ✅ Completed | ✅ Solved | [A02](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7529797603266441216-I169/) · [A03](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530279157751128064-cOjl/) · [A04](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530279943574953984-KqLd/) · [A05](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530280437118857216-ckyJ/) · [A06](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530281610592628737-vBEI/) · [Weekly](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-ansible-share-7530292695215423488-jnaI/) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w9-ansible) |
 | 10 | Azure DevOps (CI/CD) | ✅ Completed | ✅ Solved | [A02](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7530822428558622720-U54j/) · [A03](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7530823894077788160-Vlsp/) · [A04](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7531358347317366784-ZP2p/) · [A05](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-azuredevops-share-7531359142620413952-rZCY/) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w10-azure-devops) |
-| 11 | Docker | ✅ Completed | ✅ Solved | [A07](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-docker-share-7531361148256956416-zOE3/) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w11-docker) |
+| 11 | Docker | ✅ Completed | ✅ Solved | [A06](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-docker-share-7531544819219750912-_KQH/) · [A07](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-docker-share-7531361148256956416-zOE3/) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w11-docker) |
 | 12 | Kubernetes | ✅ Completed | ✅ Solved | [A11](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-kubernetes-share-7531361866757947392-iT1M/) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w12-kubernetes) |
 | 13 | Final Project | ✅ Completed | ✅ Solved | [Capstone](https://www.linkedin.com/posts/javeson-francois-liu-999135437_dmibypravinmishra-devops-terraform-share-7531362527478394880-XJId/) | [Blog Post](https://javesonfrancoisliu.vercel.app/blog/dmi-w13-final-project) |
 
